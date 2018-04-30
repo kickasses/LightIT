@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">LightIT</string>
+
+    <string name="image_des">General image content description</string>
 </resources>
