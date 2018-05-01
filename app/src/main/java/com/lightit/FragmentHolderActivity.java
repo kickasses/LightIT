@@ -4,9 +4,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class HolderActivity extends AppCompatActivity {
+public class FragmentHolderActivity extends AppCompatActivity {
 
-    private static final String TAG = HolderActivity.class.getSimpleName();
+    private static final String TAG = FragmentHolderActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

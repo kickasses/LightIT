@@ -2,4 +2,9 @@
     <string name="app_name">LightIT</string>
 
     <string name="image_des">General image content description</string>
+    <string name="enter_password">Enter password</string>
+    <string name="show_password">Show password</string>
+    <string name="show_advanced_option">Show advanced option</string>
+    <string name="cancel">CANCEL</string>
+    <string name="connect">CONNECT</string>
 </resources>

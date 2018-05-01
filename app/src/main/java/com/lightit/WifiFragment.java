@@ -10,17 +10,21 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class WifiFragment extends Fragment {
+import static com.lightit.LoginDialog.*;
+
+public class WifiFragment extends Fragment implements LoginDialogListener {
 
     private static final String TAG = WifiFragment.class.getSimpleName();
 
@@ -61,6 +65,16 @@ public class WifiFragment extends Fragment {
         mScanResultAdapter = new ScanResultAdapter(mScanResultList);
         mRecyclerView.setAdapter(mScanResultAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mScanResultAdapter.SetOnItemClickListener(new ScanResultAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Log.i(TAG, "item position: " + String.valueOf(position));
+                ScanResult scan_item = mScanResultAdapter.getScanItem(position);
+                Log.i(TAG, scan_item.SSID);
+                showLoginDialog(scan_item.SSID);
+
+            }
+        });
 
         return rootView;
     }
@@ -75,6 +89,22 @@ public class WifiFragment extends Fragment {
     public void onPause() {
         super.onPause();
         getContext().unregisterReceiver(mReceiver);
+    }
+
+    // Call this method to launch the edit dialog
+    private void showLoginDialog(String SSID) {
+        FragmentManager fm = getFragmentManager();
+        LoginDialog editNameDialogFragment = LoginDialog.newInstance(SSID);
+
+        // SETS the target fragment for use later when sending results
+        editNameDialogFragment.setTargetFragment(WifiFragment.this, 300);
+        editNameDialogFragment.show(fm, "dialog_login");
+    }
+
+    // This is called when the dialog is completed and the results have been passed
+    @Override
+    public void onFinishEditDialog(String inputText) {
+
     }
 
     class WifiScanReceiver extends BroadcastReceiver {

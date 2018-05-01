@@ -15,10 +15,11 @@ import static android.net.wifi.WifiManager.calculateSignalLevel;
 
 public class ScanResultAdapter extends RecyclerView.Adapter<ScanResultAdapter.ScanResultHolder> {
 
-    private List<ScanResult> scanResults;
+    private List<ScanResult> mScanResults;
+    private OnItemClickListener mItemClickListener;
 
     ScanResultAdapter(List<ScanResult> scanResults) {
-        this.scanResults = scanResults;
+        this.mScanResults = scanResults;
         for (ScanResult result : scanResults) {
             System.out.println(result.SSID);
         }
@@ -33,7 +34,7 @@ public class ScanResultAdapter extends RecyclerView.Adapter<ScanResultAdapter.Sc
 
     @Override
     public void onBindViewHolder(@NonNull ScanResultHolder holder, int position) {
-        ScanResult result = scanResults.get(position);
+        ScanResult result = mScanResults.get(position);
 
         int level = calculateSignalLevel(result.level, 5);
         holder.mImageViewWifiLevel.setImageLevel(level);
@@ -56,20 +57,40 @@ public class ScanResultAdapter extends RecyclerView.Adapter<ScanResultAdapter.Sc
 
     @Override
     public int getItemCount() {
-        return scanResults.size();
+        return mScanResults.size();
     }
 
-    class ScanResultHolder extends RecyclerView.ViewHolder {
+    class ScanResultHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        ImageView mImageViewWifiLevel;
-        TextView mTextViewWifiSSID;
-        TextView mTextViewWifiCapability;
+        private ImageView mImageViewWifiLevel;
+        private TextView mTextViewWifiSSID;
+        private TextView mTextViewWifiCapability;
 
         ScanResultHolder(View view) {
             super(view);
             mImageViewWifiLevel = view.findViewById(R.id.image_wifi_signal);
             mTextViewWifiSSID = view.findViewById(R.id.text_wifi_SSID);
             mTextViewWifiCapability = view.findViewById(R.id.text_wifi_capability);
+            view.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            if (mItemClickListener != null) {
+                mItemClickListener.onItemClick(v, getAdapterPosition());
+            }
+        }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
+    }
+
+    public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
+        this.mItemClickListener = mItemClickListener;
+    }
+
+    public ScanResult getScanItem(int position) {
+        return mScanResults.get(position);
     }
 }
