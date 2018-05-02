@@ -1,5 +1,6 @@
 package com.lightit;
 
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,6 +17,9 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +45,11 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        ConnectionFragment connection = new ConnectionFragment();
+        fragmentManager.beginTransaction().replace(R.id.fragment, connection).commit();
     }
+
 
     @Override
     public void onBackPressed() {
@@ -80,11 +88,15 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        //android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
 
         if (id == R.id.nav_camera) {
             Toast toast = Toast.makeText(getApplicationContext(),"Hej hej",Toast.LENGTH_SHORT);
             toast.show();
-            // Handle the camera action
+            // Handle the connections
+            ConnectionFragment connection = new ConnectionFragment();
+            fragmentManager.beginTransaction().replace(R.id.fragment, connection).commit();
+
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
