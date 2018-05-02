@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -33,6 +34,8 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
     private BroadcastReceiver mReceiver;
     private ScanResultAdapter mScanResultAdapter;
     private List<ScanResult> mScanResultList;
+
+    private String mNetworkPin;
 
     public WifiFragment() {
         // Required empty public constructor
@@ -72,7 +75,7 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
                 ScanResult scan_item = mScanResultAdapter.getScanItem(position);
                 Log.i(TAG, scan_item.SSID);
                 showLoginDialog(scan_item.SSID);
-
+                //loginWith(scan_item.SSID, mNetworkPin);
             }
         });
 
@@ -103,8 +106,37 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
 
     // This is called when the dialog is completed and the results have been passed
     @Override
-    public void onFinishEditDialog(String inputText) {
+    public void onFinishLoginDialog(String password) {
+        Log.i(TAG, "password: " + password);
+        mNetworkPin = password;
+    }
 
+    private void loginWith(String networkSSID, String networkPin) {
+        WifiConfiguration wifiConf = new WifiConfiguration();
+        wifiConf.SSID = "\"" + networkSSID + "\"";
+
+        //For WPA network
+        wifiConf.preSharedKey = "\"" + networkPin + "\"";
+
+        //For open network
+        //wifiConf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+
+        //Add it to WifiManager
+        mWifiManager.addNetwork(wifiConf);
+
+        //Enable, so Android connects to the network
+        List<WifiConfiguration> wifiConfigurationList = mWifiManager.getConfiguredNetworks();
+        for (WifiConfiguration confItem : wifiConfigurationList) {
+            if (confItem.SSID != null && confItem.SSID.equals(wifiConf.SSID)) {
+
+                //Disconnect in case you're already connected
+                mWifiManager.disconnect();
+                mWifiManager.enableNetwork(confItem.networkId, true);
+                mWifiManager.reconnect();
+
+                break;
+            }
+        }
     }
 
     class WifiScanReceiver extends BroadcastReceiver {

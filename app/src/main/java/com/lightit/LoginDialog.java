@@ -13,13 +13,15 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class LoginDialog extends DialogFragment implements TextView.OnEditorActionListener {
+public class LoginDialog extends DialogFragment {
 
     private static final String TAG = LoginDialog.class.getSimpleName();
 
     private TextView mTextViewSSID;
     private EditText mEditTextPassword;
     private CheckBox mCheckBoxShowPassword;
+    private TextView mTextViewConnect;
+    private TextView mTextViewCancel;
 
     public LoginDialog() {
         // Empty constructor required for DialogFragment
@@ -48,6 +50,8 @@ public class LoginDialog extends DialogFragment implements TextView.OnEditorActi
         mTextViewSSID = view.findViewById(R.id.text_dialog_SSID);
         mEditTextPassword = view.findViewById(R.id.editText_password);
         mCheckBoxShowPassword = view.findViewById(R.id.checkBox_show_password);
+        mTextViewConnect = view.findViewById(R.id.text_dialog_connect);
+        mTextViewCancel = view.findViewById(R.id.text_dialog_cancel);
 
         String SSID = getArguments().getString("SSID");
         mTextViewSSID.setText(SSID);
@@ -57,8 +61,7 @@ public class LoginDialog extends DialogFragment implements TextView.OnEditorActi
         getDialog().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 
-
-        mEditTextPassword.setOnClickListener(new View.OnClickListener() {
+        mTextViewCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: closing dialog");
@@ -66,10 +69,11 @@ public class LoginDialog extends DialogFragment implements TextView.OnEditorActi
             }
         });
 
-        mEditTextPassword.setOnClickListener(new View.OnClickListener() {
+        mTextViewConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: connect");
+                sendBackPassword();
                 getDialog().dismiss();
             }
         });
@@ -77,18 +81,12 @@ public class LoginDialog extends DialogFragment implements TextView.OnEditorActi
 
     // Defines the listener interface
     public interface LoginDialogListener {
-        void onFinishEditDialog(String inputText);
+        void onFinishLoginDialog(String inputText);
     }
 
-    // Invoke this method to send data back to parent fragment
-    public void sendBackResult() {
+    public void sendBackPassword() {
         LoginDialogListener listener = (LoginDialogListener) getTargetFragment();
-        listener.onFinishEditDialog(mEditTextPassword.getText().toString());
+        listener.onFinishLoginDialog(mEditTextPassword.getText().toString());
         dismiss();
-    }
-
-    @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        return false;
     }
 }
