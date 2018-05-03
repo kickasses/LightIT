@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,12 +8,70 @@
     tools:context="com.lightit.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-   <FrameLayout
-       android:id="@+id/fragment"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       >
-   </FrameLayout>
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="169dp"
+        android:layout_height="241dp"
+        android:layout_marginStart="108dp"
+        android:layout_marginTop="36dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/lightoff" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView7"
+        android:layout_alignStart="@+id/textView7"
+        android:layout_marginBottom="-404dp"
+        android:text="Time active:"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/textTimeActive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/textTotalTimeActive"
+        android:layout_alignTop="@+id/textView3"
+        android:text="12:53"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView3"
+        android:layout_alignStart="@+id/textView3"
+        android:text="Total active time:"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/textTotalTimeActive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/textView5"
+        android:layout_toEndOf="@+id/textView7"
+        android:text="23:12"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="404dp"
+        android:text="Total used Energy:"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/textView7"
+        android:layout_toEndOf="@+id/textView7"
+        android:text="7.3 w"
+        android:textSize="20sp" />
 
 
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>
