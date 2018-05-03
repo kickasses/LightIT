@@ -1,10 +1,10 @@
 package com.lightit;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,14 +37,14 @@ public class LoginDialog extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.dialog_login, container);
 
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // Get field from view
         mTextViewSSID = view.findViewById(R.id.text_dialog_SSID);
@@ -53,10 +53,12 @@ public class LoginDialog extends DialogFragment {
         mTextViewConnect = view.findViewById(R.id.text_dialog_connect);
         mTextViewCancel = view.findViewById(R.id.text_dialog_cancel);
 
-        String SSID = getArguments().getString("SSID");
-        mTextViewSSID.setText(SSID);
+        if (getArguments() != null) {
+            String networkSSID = getArguments().getString("SSID");
+            mTextViewSSID.setText(networkSSID);
+        }
 
-        // Show soft keyboard automatically and request focus to password field
+        /* Show soft keyboard automatically and request focus to password field */
         mEditTextPassword.requestFocus();
         getDialog().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
@@ -73,7 +75,7 @@ public class LoginDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: connect");
-                sendBackPassword();
+                sendBackData();
                 getDialog().dismiss();
             }
         });
@@ -81,12 +83,12 @@ public class LoginDialog extends DialogFragment {
 
     // Defines the listener interface
     public interface LoginDialogListener {
-        void onFinishLoginDialog(String inputText);
+        void onFinishLoginDialog(String networkSSID, String inputPassword);
     }
 
-    public void sendBackPassword() {
+    public void sendBackData() {
         LoginDialogListener listener = (LoginDialogListener) getTargetFragment();
-        listener.onFinishLoginDialog(mEditTextPassword.getText().toString());
+        listener.onFinishLoginDialog(mTextViewSSID.getText().toString(), mEditTextPassword.getText().toString());
         dismiss();
     }
 }

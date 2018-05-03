@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
@@ -18,7 +20,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +35,6 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
     private BroadcastReceiver mReceiver;
     private ScanResultAdapter mScanResultAdapter;
     private List<ScanResult> mScanResultList;
-
-    private String mNetworkPin;
 
     public WifiFragment() {
         // Required empty public constructor
@@ -61,7 +60,7 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
 
         mScanResultList = new ArrayList<>();
 
-        mReceiver = new WifiScanReceiver();
+        mReceiver = new WifiConnectionReceiver();
         mWifiManager.startScan();
 
         mRecyclerView = rootView.findViewById(R.id.recycler_scan_result);
@@ -71,11 +70,8 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
         mScanResultAdapter.SetOnItemClickListener(new ScanResultAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Log.i(TAG, "item position: " + String.valueOf(position));
                 ScanResult scan_item = mScanResultAdapter.getScanItem(position);
-                Log.i(TAG, scan_item.SSID);
                 showLoginDialog(scan_item.SSID);
-                //loginWith(scan_item.SSID, mNetworkPin);
             }
         });
 
@@ -94,7 +90,23 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
         getContext().unregisterReceiver(mReceiver);
     }
 
-    // Call this method to launch the edit dialog
+    /**
+     * Password value returned from dialog.
+     *
+     * @param password - Wi-Fi password entered in dialog
+     */
+    @Override
+    public void onFinishLoginDialog(String SSID, String password) {
+        Log.i(TAG, "ssid:     " + SSID);
+        Log.i(TAG, "password: " + password);
+        connectToWifi(SSID, password);
+    }
+
+    /**
+     * Show dialog on recyclerView item click
+     *
+     * @param SSID - Selected Wi-Fi network SSID
+     */
     private void showLoginDialog(String SSID) {
         FragmentManager fm = getFragmentManager();
         LoginDialog editNameDialogFragment = LoginDialog.newInstance(SSID);
@@ -104,42 +116,35 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
         editNameDialogFragment.show(fm, "dialog_login");
     }
 
-    // This is called when the dialog is completed and the results have been passed
-    @Override
-    public void onFinishLoginDialog(String password) {
-        Log.i(TAG, "password: " + password);
-        mNetworkPin = password;
-    }
+    /**
+     * Connect to the specified Wi-Fi network.
+     *
+     * @param networkSSID     - The Wi-Fi network SSID
+     * @param networkPassword - The Wi-Fi password
+     */
+    private void connectToWifi(final String networkSSID, final String networkPassword) {
 
-    private void loginWith(String networkSSID, String networkPin) {
+        if (!mWifiManager.isWifiEnabled()) {
+            mWifiManager.setWifiEnabled(true);
+        }
+
         WifiConfiguration wifiConf = new WifiConfiguration();
         wifiConf.SSID = "\"" + networkSSID + "\"";
 
         //For WPA network
-        wifiConf.preSharedKey = "\"" + networkPin + "\"";
+        wifiConf.preSharedKey = "\"" + networkPassword + "\"";
 
         //For open network
         //wifiConf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
 
-        //Add it to WifiManager
-        mWifiManager.addNetwork(wifiConf);
+        int netID = mWifiManager.addNetwork(wifiConf);
+        mWifiManager.disconnect();
+        mWifiManager.enableNetwork(netID, true);
+        mWifiManager.reconnect();
 
-        //Enable, so Android connects to the network
-        List<WifiConfiguration> wifiConfigurationList = mWifiManager.getConfiguredNetworks();
-        for (WifiConfiguration confItem : wifiConfigurationList) {
-            if (confItem.SSID != null && confItem.SSID.equals(wifiConf.SSID)) {
-
-                //Disconnect in case you're already connected
-                mWifiManager.disconnect();
-                mWifiManager.enableNetwork(confItem.networkId, true);
-                mWifiManager.reconnect();
-
-                break;
-            }
-        }
     }
 
-    class WifiScanReceiver extends BroadcastReceiver {
+    class WifiConnectionReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context c, Intent intent) {
             List<ScanResult> scanResults = mWifiManager.getScanResults();
