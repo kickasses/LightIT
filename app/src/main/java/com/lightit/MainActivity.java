@@ -1,20 +1,24 @@
 package com.lightit;
 
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private FragmentManager mFragmentManager;
+    public static final String INTENT_NAME = "FragmentName";
+    public static final String WIFI_FRAGMENT = "WifiFragment";
+    public static final String GRAPH_FRAGMENT = "GraphFragment";
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,10 +34,8 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setItemIconTintList(null);
+        //navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(this);
-
-        mFragmentManager = getSupportFragmentManager();
     }
 
 
@@ -49,14 +51,23 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        int id = item.getItemId();
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Log.i(TAG, "clicked navigation drawer");
 
+        int itemID = item.getItemId();
+
+        if (itemID == R.id.nav_connection) {
+            Intent connectionIntent = new Intent(MainActivity.this, FragmentHolderActivity.class);
+            connectionIntent.putExtra(INTENT_NAME, WIFI_FRAGMENT);
+            startActivity(connectionIntent);
+        }
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 }
