@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -100,6 +101,7 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
         Log.i(TAG, "ssid:     " + SSID);
         Log.i(TAG, "password: " + password);
         connectToWifi(SSID, password);
+
     }
 
     /**
@@ -131,17 +133,54 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
         WifiConfiguration wifiConf = new WifiConfiguration();
         wifiConf.SSID = "\"" + networkSSID + "\"";
 
-        //For WPA network
+        //For WPA network or hotspot(WPA2-PSK)
         wifiConf.preSharedKey = "\"" + networkPassword + "\"";
 
+        WifiManager wifiManager = (WifiManager) getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
         //For open network
-        //wifiConf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+        //  wifiConf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+
+        wifiConf.status = WifiConfiguration.Status.ENABLED;
+        wifiConf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+        wifiConf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+        wifiConf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+        wifiConf.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+        wifiConf.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+        wifiConf.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
 
         int netID = mWifiManager.addNetwork(wifiConf);
-        mWifiManager.disconnect();
-        mWifiManager.enableNetwork(netID, true);
-        mWifiManager.reconnect();
+        if (netID != -1) {
+            //mWifiManager.disconnect();
+            wifiManager.enableNetwork(netID, true);
+            //mWifiManager.reconnect();
+            wifiManager.saveConfiguration();
+        }
+        checkConnectivity();
+    }
 
+    /**
+     * Check Wi-Fi connectivity
+     */
+    private void checkConnectivity() {
+
+        Thread thread = new Thread() {
+            public void run() {
+                ConnectivityManager connManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+                if (mWifi.isConnected()) {
+                    Log.i(TAG, "wifi connected");
+                } else {
+                    Log.i(TAG, "wifi is not connected");
+                }
+
+                WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+                Log.i(TAG, "network ID: " + wifiInfo.getNetworkId());
+            }
+        };
+
+        thread.start();
     }
 
     class WifiConnectionReceiver extends BroadcastReceiver {
