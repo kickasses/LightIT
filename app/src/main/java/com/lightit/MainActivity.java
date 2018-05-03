@@ -1,14 +1,13 @@
 package com.lightit;
 
-import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
+import android.support.v4.app.Fragment;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -19,6 +18,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+    android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
 
     @Override
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        ConnectionFragment connection = new ConnectionFragment();
+        StartFragment connection = new StartFragment();
         fragmentManager.beginTransaction().replace(R.id.fragment, connection).commit();
     }
 
@@ -90,18 +90,65 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         //android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_start) {
             Toast toast = Toast.makeText(getApplicationContext(),"Hej hej",Toast.LENGTH_SHORT);
             toast.show();
+
+            Fragment startFrag = new StartFragment();
+            fragmentManager.beginTransaction().replace(R.id.fragment, startFrag).commit();
+//            fragmentManager.beginTransaction();
+//            fragmentTransaction.replace(R.id.fragment, startFrag);
+//            fragmentTransaction.commit();
             // Handle the connections
-            ConnectionFragment connection = new ConnectionFragment();
-            fragmentManager.beginTransaction().replace(R.id.fragment, connection).commit();
+            /*StartFragment connection = new StartFragment();
+            fragmentManager.beginTransaction().replace(R.id.fragment, connection).commit();*/
 
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_currentLightbulb) {
+            Toast toast = Toast.makeText(getApplicationContext(),"Nummer 2",Toast.LENGTH_SHORT);
+            toast.show();
 
-        } else if (id == R.id.nav_slideshow) {
+            Fragment lightbulbFragment = new CurrentLightbulb();
+            /*fragmentManager.beginTransaction();
+            //android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment, lightbulbFragment);
+            fragmentTransaction.commit();*/
+            fragmentManager.beginTransaction().replace(R.id.fragment, lightbulbFragment).commit();
+            //ft.replace(R.id.fragment,fragment);
+            //ft.commit();
 
-        } else if (id == R.id.nav_manage) {
+
+            /*StartFragment connection = new StartFragment();
+            fragmentManager.beginTransaction().replace(R.id.fragment, connection).commit();*/
+
+        } else if (id == R.id.nav_statistic) {
+            Fragment statistic = new StatisticFragment();
+            fragmentManager.beginTransaction().replace(R.id.fragment, statistic).commit();
+
+        } else if (id == R.id.nav_login){
+            Toast.makeText(MainActivity.this,"LOOOOGGG IIIIN",Toast.LENGTH_LONG).show();
+
+        } else if (id == R.id.nav_logout) {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setMessage("Are you sure you want to logout?");
+                    alertDialogBuilder.setPositiveButton("yes",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface arg0, int arg1) {
+                                    Toast.makeText(MainActivity.this,"You clicked yes button",Toast.LENGTH_LONG).show();
+                                }
+                            });
+
+            alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Toast.makeText(MainActivity.this,"You clicked NO",Toast.LENGTH_LONG).show();
+                    //finish();
+                }
+            });
+
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+
 
         }
 
