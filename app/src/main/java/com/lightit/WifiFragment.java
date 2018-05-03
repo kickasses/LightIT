@@ -151,9 +151,9 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
 
         int netID = mWifiManager.addNetwork(wifiConf);
         if (netID != -1) {
-            //mWifiManager.disconnect();
+            mWifiManager.disconnect();
             wifiManager.enableNetwork(netID, true);
-            //mWifiManager.reconnect();
+            mWifiManager.reconnect();
             wifiManager.saveConfiguration();
         }
         checkConnectivity();
@@ -161,6 +161,7 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
 
     /**
      * Check Wi-Fi connectivity
+     * Todo: Not working properly
      */
     private void checkConnectivity() {
 
@@ -174,9 +175,6 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
                 } else {
                     Log.i(TAG, "wifi is not connected");
                 }
-
-                WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
-                Log.i(TAG, "network ID: " + wifiInfo.getNetworkId());
             }
         };
 
