@@ -18,7 +18,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-    android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
 
     @Override
@@ -95,7 +94,7 @@ public class MainActivity extends AppCompatActivity
             toast.show();
 
             Fragment startFrag = new StartFragment();
-            fragmentManager.beginTransaction().replace(R.id.fragment, startFrag).commit();
+            fragmentManager.beginTransaction().replace(R.id.fragment, startFrag).addToBackStack(null).commit();
 //            fragmentManager.beginTransaction();
 //            fragmentTransaction.replace(R.id.fragment, startFrag);
 //            fragmentTransaction.commit();
@@ -112,7 +111,7 @@ public class MainActivity extends AppCompatActivity
             //android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragment, lightbulbFragment);
             fragmentTransaction.commit();*/
-            fragmentManager.beginTransaction().replace(R.id.fragment, lightbulbFragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.fragment, lightbulbFragment).addToBackStack(null).commit();
             //ft.replace(R.id.fragment,fragment);
             //ft.commit();
 
@@ -122,31 +121,35 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_statistic) {
             Fragment statistic = new StatisticFragment();
-            fragmentManager.beginTransaction().replace(R.id.fragment, statistic).commit();
+            fragmentManager.beginTransaction().replace(R.id.fragment, statistic).addToBackStack(null).commit();
 
         } else if (id == R.id.nav_login){
-            Toast.makeText(MainActivity.this,"LOOOOGGG IIIIN",Toast.LENGTH_LONG).show();
+            Fragment loginFragment = new Login();
+            Toast.makeText(MainActivity.this,"Log in",Toast.LENGTH_LONG).show();
+            fragmentManager.beginTransaction().replace(R.id.fragment, loginFragment).addToBackStack(null).commit();
 
         } else if (id == R.id.nav_logout) {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-            alertDialogBuilder.setMessage("Are you sure you want to logout?");
-                    alertDialogBuilder.setPositiveButton("yes",
+            //alertdialog.builder is an alertmessage that gives the user two choices
+            AlertDialog.Builder alertChoice = new AlertDialog.Builder(this);
+            alertChoice.setMessage("Are you sure you want to logout?");
+                    alertChoice.setPositiveButton("yes",
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface arg0, int arg1) {
-                                    Toast.makeText(MainActivity.this,"You clicked yes button",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(MainActivity.this,"Bye bye",Toast.LENGTH_LONG).show();
+                                    finish();
                                 }
                             });
 
-            alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+
+            alertChoice.setNegativeButton("No",new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    Toast.makeText(MainActivity.this,"You clicked NO",Toast.LENGTH_LONG).show();
-                    //finish();
+
                 }
             });
 
-            AlertDialog alertDialog = alertDialogBuilder.create();
+            AlertDialog alertDialog = alertChoice.create();
             alertDialog.show();
 
 

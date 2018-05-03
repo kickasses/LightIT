@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/LightIT.iml" filepath="$PROJECT_DIR$/LightIT.iml" />
-      <module fileurl="file://C:\Skola\VT18\Software Engineering DA216A\Project\LightIT\LightProject.iml" filepath="C:\Skola\VT18\Software Engineering DA216A\Project\LightIT\LightProject.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
