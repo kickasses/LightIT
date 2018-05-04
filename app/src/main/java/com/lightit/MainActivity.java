@@ -11,6 +11,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import lecho.lib.hellocharts.view.LineChartView;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -59,6 +61,11 @@ public class MainActivity extends AppCompatActivity
             Intent connectionIntent = new Intent(MainActivity.this, FragmentHolderActivity.class);
             connectionIntent.putExtra(INTENT_NAME, EXTRA_WIFIFRAGMENT);
             startActivity(connectionIntent);
+        }
+
+        if (itemID == R.id.nav_graph) {
+            Intent intent = new Intent(MainActivity.this, LineColumnDependencyActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
