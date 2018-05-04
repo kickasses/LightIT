@@ -16,8 +16,6 @@ public class MainActivity extends AppCompatActivity
 
     public static final String INTENT_NAME = "FragmentName";
     public static final String EXTRA_WIFIFRAGMENT = "WifiFragment";
-    public static final String EXTRA_GRAPHFRAGMENT = "GraphFragment";
-    private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

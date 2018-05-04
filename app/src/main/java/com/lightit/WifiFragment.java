@@ -4,8 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
@@ -27,6 +25,9 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.lightit.LoginDialog.*;
@@ -35,11 +36,12 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
 
     private static final String TAG = WifiFragment.class.getSimpleName();
 
-    private RecyclerView mRecyclerView;
     private WifiManager mWifiManager;
     private BroadcastReceiver mReceiver;
     private ScanResultAdapter mScanResultAdapter;
     private List<ScanResult> mScanResultList;
+
+    private Context context;
 
     public WifiFragment() {
         // Required empty public constructor
@@ -49,9 +51,9 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
-            Context context = getActivity().getApplicationContext();
+            context = getActivity();
             if (context != null) {
-                mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+                mWifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             }
         } catch (NullPointerException npe) {
             Log.e(TAG, "Error setting up Wi-Fi");
@@ -63,14 +65,13 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_wifi, container, false);
         setHasOptionsMenu(true);
-        Log.i(TAG, "welcome to " + TAG);
 
         mScanResultList = new ArrayList<>();
 
         mReceiver = new WifiConnectionReceiver();
         mWifiManager.startScan();
 
-        mRecyclerView = rootView.findViewById(R.id.recycler_scan_result);
+        RecyclerView mRecyclerView = rootView.findViewById(R.id.recycler_scan_result);
         mScanResultAdapter = new ScanResultAdapter(mScanResultList);
         mRecyclerView.setAdapter(mScanResultAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -88,13 +89,13 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
     @Override
     public void onResume() {
         super.onResume();
-        getContext().registerReceiver(mReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        context.registerReceiver(mReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        getContext().unregisterReceiver(mReceiver);
+        context.unregisterReceiver(mReceiver);
     }
 
     @Override
@@ -141,11 +142,12 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
      */
     private void showLoginDialog(String SSID) {
         FragmentManager fm = getFragmentManager();
-        LoginDialog editNameDialogFragment = LoginDialog.newInstance(SSID);
 
-        // SETS the target fragment for use later when sending results
-        editNameDialogFragment.setTargetFragment(WifiFragment.this, 300);
-        editNameDialogFragment.show(fm, "dialog_login");
+        if (fm != null) {
+            LoginDialog connectDialog = LoginDialog.newInstance(SSID);
+            connectDialog.setTargetFragment(WifiFragment.this, 300);
+            connectDialog.show(fm, "dialog_login");
+        }
     }
 
     /**
@@ -166,8 +168,6 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
         //For WPA network or hotspot(WPA2-PSK)
         wifiConf.preSharedKey = "\"" + networkPassword + "\"";
 
-        WifiManager wifiManager = (WifiManager) getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
         //For open network
         //  wifiConf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
 
@@ -182,18 +182,42 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
         int netID = mWifiManager.addNetwork(wifiConf);
         if (netID != -1) {
             mWifiManager.disconnect();
-            wifiManager.enableNetwork(netID, true);
+            mWifiManager.enableNetwork(netID, true);
             mWifiManager.reconnect();
-            wifiManager.saveConfiguration();
+
+            mWifiManager.saveConfiguration();
         }
     }
 
     class WifiConnectionReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context c, Intent intent) {
+            // Get List of ScanResults
             List<ScanResult> scanResults = mWifiManager.getScanResults();
+
+            // Create Temporary HashMap
+            HashMap<String, ScanResult> map = new HashMap<>();
+            for (ScanResult scanResult : scanResults) {
+                if (scanResult.SSID != null && !scanResult.SSID.isEmpty()) {
+                    map.put(scanResult.SSID, scanResult);
+                }
+            }
+
+            // Add to new List
+            List<ScanResult> sortedScanResults = new ArrayList<>(map.values());
+
+            // Create Comparator to sort by level
+            Comparator<ScanResult> comparator = new Comparator<ScanResult>() {
+                @Override
+                public int compare(ScanResult o1, ScanResult o2) {
+                    return (Integer.compare(o2.level, o1.level));
+                }
+            };
+
+            // Apply Comparator and sort
+            Collections.sort(sortedScanResults, comparator);
             mScanResultList.clear();
-            mScanResultList.addAll(scanResults);
+            mScanResultList.addAll(sortedScanResults);
             mScanResultAdapter.notifyDataSetChanged();
         }
     }

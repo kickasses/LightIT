@@ -53,7 +53,6 @@ public class ScanResultAdapter extends RecyclerView.Adapter<ScanResultAdapter.Sc
             network_type.append("Open");
         }
         holder.mTextViewWifiCapability.setText(network_type);
-        //holder.mTextViewWifiCapability.setText(result.capabilities);
     }
 
     @Override
