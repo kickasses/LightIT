@@ -9,15 +9,14 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String INTENT_NAME = "FragmentName";
-    public static final String WIFI_FRAGMENT = "WifiFragment";
-    public static final String GRAPH_FRAGMENT = "GraphFragment";
+    public static final String EXTRA_WIFIFRAGMENT = "WifiFragment";
+    public static final String EXTRA_GRAPHFRAGMENT = "GraphFragment";
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
@@ -34,7 +33,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = findViewById(R.id.nav_view);
-        //navigationView.setItemIconTintList(null);
+        navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -56,13 +55,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Log.i(TAG, "clicked navigation drawer");
-
         int itemID = item.getItemId();
 
         if (itemID == R.id.nav_connection) {
             Intent connectionIntent = new Intent(MainActivity.this, FragmentHolderActivity.class);
-            connectionIntent.putExtra(INTENT_NAME, WIFI_FRAGMENT);
+            connectionIntent.putExtra(INTENT_NAME, EXTRA_WIFIFRAGMENT);
             startActivity(connectionIntent);
         }
 

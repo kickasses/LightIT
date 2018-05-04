@@ -18,8 +18,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +62,7 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_wifi, container, false);
+        setHasOptionsMenu(true);
         Log.i(TAG, "welcome to " + TAG);
 
         mScanResultList = new ArrayList<>();
@@ -89,6 +95,30 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
     public void onPause() {
         super.onPause();
         getContext().unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_connection, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        // todo Make it work
+        final Switch switch_wifi = item.getActionView().findViewById(R.id.switch_wifi);
+        switch_wifi.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // todo Enable Wi-Fi, show list
+                } else {
+                    // todo Disable Wi-Fi, no list
+                }
+            }
+        });
+        return true;
     }
 
     /**
@@ -156,29 +186,6 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
             mWifiManager.reconnect();
             wifiManager.saveConfiguration();
         }
-        checkConnectivity();
-    }
-
-    /**
-     * Check Wi-Fi connectivity
-     * Todo: Not working properly
-     */
-    private void checkConnectivity() {
-
-        Thread thread = new Thread() {
-            public void run() {
-                ConnectivityManager connManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-                if (mWifi.isConnected()) {
-                    Log.i(TAG, "wifi connected");
-                } else {
-                    Log.i(TAG, "wifi is not connected");
-                }
-            }
-        };
-
-        thread.start();
     }
 
     class WifiConnectionReceiver extends BroadcastReceiver {

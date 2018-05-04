@@ -4,6 +4,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.support.v7.widget.Toolbar;
 
 public class FragmentHolderActivity extends AppCompatActivity {
 
@@ -13,6 +14,8 @@ public class FragmentHolderActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment_holder);
+        Toolbar toolbar = findViewById(R.id.toolbar_holder);
+        setSupportActionBar(toolbar);
 
         Log.i(TAG, "welcome to " + TAG);
 
@@ -21,7 +24,7 @@ public class FragmentHolderActivity extends AppCompatActivity {
         // Get intent String from MainActivity
         String fragmentName = getIntent().getStringExtra(MainActivity.INTENT_NAME);
         switch (fragmentName) {
-            case MainActivity.WIFI_FRAGMENT:
+            case MainActivity.EXTRA_WIFIFRAGMENT:
                 WifiFragment wifiFragment = new WifiFragment();
                 fragmentManager.beginTransaction().replace(R.id.container, wifiFragment).commit();
         }
