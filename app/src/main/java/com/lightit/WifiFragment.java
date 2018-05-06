@@ -21,8 +21,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.Switch;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +40,7 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
     private List<ScanResult> mScanResultList;
 
     private Context context;
+    private OnFragmentInteractionListener mListener;
 
     public WifiFragment() {
         // Required empty public constructor
@@ -64,6 +63,9 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_wifi, container, false);
+        if (mListener != null) {
+            mListener.onFragmentInteraction("Connection");
+        }
         setHasOptionsMenu(true);
 
         mScanResultList = new ArrayList<>();
@@ -99,6 +101,23 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_connection, menu);
         super.onCreateOptionsMenu(menu, inflater);
@@ -106,20 +125,7 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        // todo Make it work
-        final Switch switch_wifi = item.getActionView().findViewById(R.id.switch_wifi);
-        switch_wifi.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    // todo Enable Wi-Fi, show list
-                } else {
-                    // todo Disable Wi-Fi, no list
-                }
-            }
-        });
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -133,6 +139,10 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
         Log.i(TAG, "password: " + password);
         connectToWifi(SSID, password);
 
+    }
+
+    public interface OnFragmentInteractionListener {
+        void onFragmentInteraction(String title);
     }
 
     /**
@@ -169,7 +179,7 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
         wifiConf.preSharedKey = "\"" + networkPassword + "\"";
 
         //For open network
-        //  wifiConf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+        //wifiConf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
 
         wifiConf.status = WifiConfiguration.Status.ENABLED;
         wifiConf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);

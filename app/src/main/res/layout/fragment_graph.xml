@@ -7,10 +7,10 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".PreviewLineChartActivity$PlaceholderFragment" >
+    tools:context=".GraphFragment" >
 
     <lecho.lib.hellocharts.view.LineChartView
-        android:id="@+id/chart"
+        android:id="@+id/chart_top"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" >
@@ -23,11 +23,11 @@
         android:layout_marginTop="8dp"
         android:background="@android:color/darker_gray" />
 
-    <lecho.lib.hellocharts.view.PreviewLineChartView
-        android:id="@+id/chart_preview"
+    <lecho.lib.hellocharts.view.ColumnChartView
+        android:id="@+id/chart_bottom"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" >
-    </lecho.lib.hellocharts.view.PreviewLineChartView>
+    </lecho.lib.hellocharts.view.ColumnChartView>
 
 </LinearLayout>

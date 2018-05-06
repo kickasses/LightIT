@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -19,12 +18,11 @@ public class LoginDialog extends DialogFragment {
 
     private TextView mTextViewSSID;
     private EditText mEditTextPassword;
-    private CheckBox mCheckBoxShowPassword;
     private TextView mTextViewConnect;
     private TextView mTextViewCancel;
 
     public LoginDialog() {
-        // Empty constructor required for DialogFragment
+        // Required empty public constructor
     }
 
     public static LoginDialog newInstance(String SSID) {
@@ -49,7 +47,6 @@ public class LoginDialog extends DialogFragment {
         // Get field from view
         mTextViewSSID = view.findViewById(R.id.text_dialog_SSID);
         mEditTextPassword = view.findViewById(R.id.editText_password);
-        mCheckBoxShowPassword = view.findViewById(R.id.checkBox_show_password);
         mTextViewConnect = view.findViewById(R.id.text_dialog_connect);
         mTextViewCancel = view.findViewById(R.id.text_dialog_cancel);
 
