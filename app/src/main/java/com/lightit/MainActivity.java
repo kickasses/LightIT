@@ -61,6 +61,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.nav_home:
+                HomeFragment homeFragment = new HomeFragment();
+                mFragmentManager.beginTransaction().replace(R.id.fragment_container, homeFragment).addToBackStack(null).commit();
+                break;
             case R.id.nav_connection:
                 WifiFragment wifiFragment = new WifiFragment();
                 mFragmentManager.beginTransaction().replace(R.id.fragment_container, wifiFragment).addToBackStack(null).commit();

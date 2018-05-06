@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class LoginDialog extends DialogFragment {
 
@@ -55,15 +56,19 @@ public class LoginDialog extends DialogFragment {
             mTextViewSSID.setText(networkSSID);
         }
 
-        /* Show soft keyboard automatically and request focus to password field */
+        // Show soft keyboard automatically and request focus to password field
         mEditTextPassword.requestFocus();
-        getDialog().getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        if (getDialog().getWindow()!=null){
+            getDialog().getWindow().setSoftInputMode(
+                    WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        }else {
+            Toast.makeText(getContext(),"Cannot start auto keyboard",Toast.LENGTH_SHORT).show();
+        }
+
 
         mTextViewCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: closing dialog");
                 getDialog().dismiss();
             }
         });
@@ -71,7 +76,6 @@ public class LoginDialog extends DialogFragment {
         mTextViewConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: connect");
                 sendBackData();
                 getDialog().dismiss();
             }
@@ -85,7 +89,9 @@ public class LoginDialog extends DialogFragment {
 
     public void sendBackData() {
         LoginDialogListener listener = (LoginDialogListener) getTargetFragment();
-        listener.onFinishLoginDialog(mTextViewSSID.getText().toString(), mEditTextPassword.getText().toString());
+        if (listener != null) {
+            listener.onFinishLoginDialog(mTextViewSSID.getText().toString(), mEditTextPassword.getText().toString());
+        }
         dismiss();
     }
 }
