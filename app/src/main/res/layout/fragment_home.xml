@@ -7,7 +7,7 @@
     tools:context=".HomeFragment">
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/onOffButton"
         android:layout_width="match_parent"
         android:layout_height="204dp"
         android:background="@null"
