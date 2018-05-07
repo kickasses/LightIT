@@ -23,8 +23,30 @@ public class User {
     @ColumnInfo(name = "Start_Time") //column
     private String startTime;
 
+    @ColumnInfo(name = "Week_Day") //column
+    private String weekDay;
+
+    @ColumnInfo(name = "Week_Number") //column
+    private int weekNumber;
+
+    public int getWeekNumber() {
+        return weekNumber;
+    }
+
+    public void setWeekNumber(int weekNumber) {
+        this.weekNumber = weekNumber;
+    }
+
     public int getId() {
         return Id;
+    }
+
+    public String getWeekDay() {
+        return weekDay;
+    }
+
+    public void setWeekDay(String weekDay) {
+        this.weekDay = weekDay;
     }
 
     public void setId(int id) {

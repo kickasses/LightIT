@@ -18,4 +18,9 @@ public interface MyDao {
 
     @Query("SELECT * FROM Users") //call this to get a list of all users
     public List<User> getUsers();
+
+    @Query("SELECT Total_Watt FROM Users WHERE Week_Number = (SELECT max(Week_Number) FROM Users)")
+    public List<Double> getAllTotalWattFromLatestWeek();
+
+
 }

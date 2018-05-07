@@ -48,6 +48,8 @@ public class GraphFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private MyAppDatabase myAppDatabase;
+
     public GraphFragment() {
         // Required empty public constructor
     }
@@ -72,7 +74,6 @@ public class GraphFragment extends Fragment {
         chartBottom = rootView.findViewById(R.id.chart_bottom);
 
         generateColumnData();
-
         return rootView;
     }
 
