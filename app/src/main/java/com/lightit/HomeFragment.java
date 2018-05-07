@@ -6,10 +6,16 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 
 import static com.lightit.MainActivity.myAppDatabase;
 
@@ -24,6 +30,7 @@ public class HomeFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private ImageButton onOffButton;
+    private boolean isLightOn; //used to check if the light is on
 
     public HomeFragment() {
         // Required empty public constructor
@@ -46,6 +53,8 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 User user = new User(); //creates a new user that will be inserted into database
                 user.setStartTime(getTimeStamp()); //gets the time that the button was clicked
+                user.setWeekDay(getDay());
+                user.setWeekNumber(getWeekNumber());
                 myAppDatabase.myDao().addUser(user);
             }
         });
@@ -80,8 +89,18 @@ public class HomeFragment extends Fragment {
     }
 
     private String getTimeStamp() {
-        String date = DateFormat.format("dd-MM-yyyy hh:mm:ss", new java.util.Date()).toString();
+        String date = DateFormat.format("dd-MM-yyyy", new java.util.Date()).toString();
         System.out.println("date: " + date);
         return date;
+    }
+
+    private String getDay() {
+        Calendar calendar = Calendar.getInstance();
+        String currentDay = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
+        return currentDay;
+    }
+
+    private int getWeekNumber() {
+        return Calendar.getInstance().get(Calendar.WEEK_OF_YEAR);
     }
 }
