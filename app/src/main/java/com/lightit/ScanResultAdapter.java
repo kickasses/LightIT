@@ -20,9 +20,6 @@ public class ScanResultAdapter extends RecyclerView.Adapter<ScanResultAdapter.Sc
 
     ScanResultAdapter(List<ScanResult> scanResults) {
         this.mScanResults = scanResults;
-        for (ScanResult result : scanResults) {
-            System.out.println(result.SSID);
-        }
     }
 
     @NonNull

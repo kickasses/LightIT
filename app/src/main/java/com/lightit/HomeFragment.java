@@ -1,9 +1,9 @@
 package com.lightit;
 
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
@@ -49,6 +49,15 @@ public class HomeFragment extends Fragment {
                 myAppDatabase.myDao().addUser(user);
             }
         });
+
+        FragmentManager fragmentManager = getChildFragmentManager();
+
+        LineChartFragment lineChartFragment = new LineChartFragment();
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, lineChartFragment).commit();
+
+        ViewPagerFragment viewPagerFragment = new ViewPagerFragment();
+        fragmentManager.beginTransaction().replace(R.id.container_viewPager, viewPagerFragment).commit();
+
         return v;
     }
 

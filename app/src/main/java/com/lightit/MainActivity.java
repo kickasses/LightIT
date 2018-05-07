@@ -10,7 +10,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.text.format.DateFormat;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
@@ -33,7 +32,7 @@ public class MainActivity extends AppCompatActivity
         mFragmentManager = getSupportFragmentManager();
         if (savedInstanceState == null) {
             HomeFragment homeFragment = new HomeFragment();
-            mFragmentManager.beginTransaction().replace(R.id.fragment_container, homeFragment).addToBackStack(null).commit();
+            mFragmentManager.beginTransaction().replace(R.id.fragment_container, homeFragment).commit();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
