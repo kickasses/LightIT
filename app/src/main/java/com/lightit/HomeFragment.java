@@ -56,9 +56,9 @@ public class HomeFragment extends Fragment {
                 if (isLightOn == true) {
                     startTime = System.currentTimeMillis();
                     String start = String.valueOf(startTime);
-                    Toast.makeText(getContext(),"start: "+ start, Toast.LENGTH_SHORT).show();
-
-
+                    //Toast.makeText(getContext(),"start: "+ start, Toast.LENGTH_SHORT).show();
+                    onOffButton.setImageResource(R.drawable.bulb);
+                    Toast.makeText(getContext(), "on", Toast.LENGTH_SHORT).show();
                     User user = new User(); //creates a new user that will be inserted into database
                     user.setStartDate(getTimeStamp()); //gets the time that the button was clicked
                     user.setWeekDay(getDay());
@@ -70,20 +70,19 @@ public class HomeFragment extends Fragment {
                 else {
 
                     long stoptime = System.currentTimeMillis();
-                    Toast.makeText(getContext(),"stop: "+ stoptime, Toast.LENGTH_SHORT).show();
-
+                    //Toast.makeText(getContext(),"stop: "+ stoptime, Toast.LENGTH_SHORT).show();
+                    onOffButton.setImageResource(R.drawable.image_bulb);
+                    Toast.makeText(getContext(), "off", Toast.LENGTH_SHORT).show();
                     long totalTime = stoptime - startTime;
-                    Toast.makeText(getContext(),"gettimestamp: "+ getTimeStamp(), Toast.LENGTH_SHORT).show();
-                    Toast.makeText(getContext(),"getdate: "+ myAppDatabase.myDao().getDate(), Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getContext(),"gettimestamp: "+ getTimeStamp(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(),"getdate: "+ myAppDatabase.myDao().getDate(), Toast.LENGTH_LONG).show();
 
 
                     if (myAppDatabase.myDao().getDate().equals(getTimeStamp())){
-                        Toast.makeText(getContext(), "fan va bra", Toast.LENGTH_SHORT).show();
                         myAppDatabase.myDao().updateTime(getTimeStamp(),totalTime/1000); //convert it to seconds
-                        Toast.makeText(getContext(), "updated time: " + myAppDatabase.myDao().getTime(getTimeStamp()), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), "updated time: " + myAppDatabase.myDao().getTime(getTimeStamp()), Toast.LENGTH_SHORT).show();
 
                     }else {
-                        Toast.makeText(getContext(), "fan va kass", Toast.LENGTH_SHORT).show();
                         User user = new User();
                         user.setStartDate(getTimeStamp()); //gets the time that the button was clicked
                         user.setWeekDay(getDay());
