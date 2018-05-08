@@ -15,19 +15,21 @@ public class User {
     private int Id;
 
     @ColumnInfo(name = "Total_Time_On") //column
-    private String totalTime;
+    private int totalTime;
 
-    @ColumnInfo(name = "Total_Watt") //column
-    private double totalWatt;
+    @ColumnInfo(name = "Total_Energy") //column
+    private double totalEnergy;
 
     @ColumnInfo(name = "Start_Time") //column
-    private String startTime;
+    private String startDate;
 
     @ColumnInfo(name = "Week_Day") //column
     private String weekDay;
 
     @ColumnInfo(name = "Week_Number") //column
     private int weekNumber;
+
+
 
     public int getWeekNumber() {
         return weekNumber;
@@ -53,27 +55,27 @@ public class User {
         this.Id = id;
     }
 
-    public String getTotalTime() {
+    public int getTotalTime() {
         return totalTime;
     }
 
-    public void setTotalTime(String totalTime) {
+    public void setTotalTime(int totalTime) {
         this.totalTime = totalTime;
     }
 
-    public double getTotalWatt() {
-        return totalWatt;
+    public double getTotalEnergy() {
+        return totalEnergy;
     }
 
-    public void setTotalWatt(double totalWatt) {
-        this.totalWatt = totalWatt;
+    public void setTotalEnergy(double totalEnergy) {
+        this.totalEnergy = totalEnergy;
     }
 
-    public String getStartTime() {
-        return startTime;
+    public String getStartDate() {
+        return startDate;
     }
 
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
     }
 }
