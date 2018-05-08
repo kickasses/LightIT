@@ -12,19 +12,21 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.lightit.database.DayRoomDatabase;
+import com.lightit.fragment.GraphFragment;
+import com.lightit.fragment.HomeFragment;
+import com.lightit.fragment.WifiFragment;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GraphFragment.OnFragmentInteractionListener
         , WifiFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener {
 
     private FragmentManager mFragmentManager;
-    public static MyAppDatabase myAppDatabase; //To use database you have to create this object
+    public static DayRoomDatabase dayRoomDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        myAppDatabase = Room.databaseBuilder(getApplicationContext(), MyAppDatabase.class, "database")
-                .allowMainThreadQueries().build(); //creates the database and allows it to run on the main thread
-
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -44,8 +46,10 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(this);
-    }
 
+        dayRoomDatabase = Room.databaseBuilder(getApplicationContext(), DayRoomDatabase.class, "database")
+                .allowMainThreadQueries().build();
+    }
 
     @Override
     public void onBackPressed() {

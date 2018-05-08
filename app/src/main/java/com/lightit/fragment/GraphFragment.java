@@ -1,4 +1,4 @@
-package com.lightit;
+package com.lightit.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,6 +10,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.lightit.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,8 +49,6 @@ public class GraphFragment extends Fragment {
     private ColumnChartData columnData;
 
     private OnFragmentInteractionListener mListener;
-
-    private MyAppDatabase myAppDatabase;
 
     public GraphFragment() {
         // Required empty public constructor

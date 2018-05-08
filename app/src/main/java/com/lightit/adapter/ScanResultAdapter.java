@@ -1,4 +1,4 @@
-package com.lightit;
+package com.lightit.adapter;
 
 import android.net.wifi.ScanResult;
 import android.support.annotation.NonNull;
@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.lightit.R;
+
 import java.util.List;
 
 import static android.net.wifi.WifiManager.calculateSignalLevel;
@@ -18,7 +20,7 @@ public class ScanResultAdapter extends RecyclerView.Adapter<ScanResultAdapter.Sc
     private List<ScanResult> mScanResults;
     private OnItemClickListener mItemClickListener;
 
-    ScanResultAdapter(List<ScanResult> scanResults) {
+    public ScanResultAdapter(List<ScanResult> scanResults) {
         this.mScanResults = scanResults;
     }
 

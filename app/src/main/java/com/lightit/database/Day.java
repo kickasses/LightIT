@@ -1,35 +1,32 @@
-package com.lightit;
+package com.lightit.database;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-/**
- * Created by Tobias Åkesson on 2018-05-05.
- */
+@Entity(tableName = "day")
+public class Day {
 
-@Entity(tableName = "Users") //creates a table with name users
-public class User {
+    @PrimaryKey(autoGenerate = true)
+    private int ID;
 
-    @PrimaryKey(autoGenerate = true) //sets Id to primary key
-    private int Id;
-
-    @ColumnInfo(name = "Total_Time_On") //column
+    @ColumnInfo(name = "TotalTime")
     private int totalTime;
 
-    @ColumnInfo(name = "Total_Energy") //column
+    @ColumnInfo(name = "TotalEnergy")
     private double totalEnergy;
 
-    @ColumnInfo(name = "Start_Time") //column
-    private String startDate;
+    @ColumnInfo(name = "Date")
+    private String date;
 
-    @ColumnInfo(name = "Week_Day") //column
+    @ColumnInfo(name = "WeekDay")
     private String weekDay;
 
-    @ColumnInfo(name = "Week_Number") //column
+    @ColumnInfo(name = "WeekNumber")
     private int weekNumber;
 
-
+    public Day() {
+    }
 
     public int getWeekNumber() {
         return weekNumber;
@@ -39,8 +36,8 @@ public class User {
         this.weekNumber = weekNumber;
     }
 
-    public int getId() {
-        return Id;
+    public int getID() {
+        return ID;
     }
 
     public String getWeekDay() {
@@ -51,8 +48,8 @@ public class User {
         this.weekDay = weekDay;
     }
 
-    public void setId(int id) {
-        this.Id = id;
+    public void setID(int ID) {
+        this.ID = ID;
     }
 
     public int getTotalTime() {
@@ -71,11 +68,11 @@ public class User {
         this.totalEnergy = totalEnergy;
     }
 
-    public String getStartDate() {
-        return startDate;
+    public String getDate() {
+        return date;
     }
 
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
+    public void setDate(String date) {
+        this.date = date;
     }
 }

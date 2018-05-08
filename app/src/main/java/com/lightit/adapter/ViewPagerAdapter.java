@@ -1,4 +1,4 @@
-package com.lightit;
+package com.lightit.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -9,12 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.lightit.R;
+
 public class ViewPagerAdapter extends PagerAdapter {
 
     private Context context;
     private String[] tips = {"tip1", "tip2", "tip3"};
 
-    ViewPagerAdapter(Context context) {
+    public ViewPagerAdapter(Context context) {
         this.context = context;
     }
 

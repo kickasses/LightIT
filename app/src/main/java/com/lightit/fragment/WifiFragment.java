@@ -1,4 +1,4 @@
-package com.lightit;
+package com.lightit.fragment;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,13 +23,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.lightit.dialog.LoginDialog;
+import com.lightit.R;
+import com.lightit.adapter.ScanResultAdapter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.lightit.LoginDialog.*;
+import static com.lightit.dialog.LoginDialog.*;
 
 public class WifiFragment extends Fragment implements LoginDialogListener {
 
