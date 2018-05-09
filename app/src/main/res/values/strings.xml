@@ -21,8 +21,20 @@
     <string name="enter_password">Enter password</string>
     <string name="show_password">Show password</string>
     <string name="show_advanced_option">Show advanced option</string>
-    <string name="cancel">CANCEL</string>
-    <string name="connect">CONNECT</string>
+    <string name="cancel">Cancel</string>
+    <string name="connect">Connect</string>
     <string name="home">Home</string>
     <string name="how_to_save_money_on_your_bills">How to save money on your bills</string>
+    <string name="set_device_wattage">Set Device Wattage</string>
+    <string name="_9w">"     "9 Watt</string>
+    <string name="_10w">"   "10 Watt</string>
+    <string name="_21w">"   "21 Watt</string>
+    <string name="_35w">"   "35 Watt</string>
+    <string name="_48w">"   "48 Watt</string>
+    <string name="_72w">"   "72 Watt</string>
+    <string name="_115w">" "115 Watt</string>
+    <string name="enter_device_wattage_or">Enter device wattage or</string>
+    <string name="set">Set</string>
+    <string name="notification_settings">Notification Settings</string>
+    <string name="choose_from_below">Choose from below:</string>
 </resources>

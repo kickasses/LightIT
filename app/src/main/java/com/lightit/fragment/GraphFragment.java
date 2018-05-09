@@ -219,9 +219,7 @@ public class GraphFragment extends Fragment {
 
         @Override
         public void onValueDeselected() {
-
             generateLineData(ChartUtils.COLOR_GREEN, 0);
-
         }
     }
 }

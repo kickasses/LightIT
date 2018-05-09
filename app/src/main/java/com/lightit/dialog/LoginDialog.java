@@ -59,13 +59,12 @@ public class LoginDialog extends DialogFragment {
 
         // Show soft keyboard automatically and request focus to password field
         mEditTextPassword.requestFocus();
-        if (getDialog().getWindow()!=null){
+        if (getDialog().getWindow() != null) {
             getDialog().getWindow().setSoftInputMode(
                     WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        }else {
-            Toast.makeText(getContext(),"Cannot start auto keyboard",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), "Cannot start auto keyboard", Toast.LENGTH_SHORT).show();
         }
-
 
         mTextViewCancel.setOnClickListener(new View.OnClickListener() {
             @Override
