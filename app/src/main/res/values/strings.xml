@@ -8,10 +8,9 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">LightIT</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="graph">Graph</string>
     <string name="connection">Connection</string>
-    <string name="other">Other</string>
+    <string name="other">Others</string>
     <string name="private_policy">Private Policy</string>
     <string name="about_us">About us</string>
     <string name="notification">Notification</string>
@@ -25,7 +24,7 @@
     <string name="connect">Connect</string>
     <string name="home">Home</string>
     <string name="how_to_save_money_on_your_bills">How to save money on your bills</string>
-    <string name="set_device_wattage">Set Device Wattage</string>
+    <string name="wattage">Wattage</string>
     <string name="_9w">"     "9 Watt</string>
     <string name="_10w">"   "10 Watt</string>
     <string name="_21w">"   "21 Watt</string>
@@ -37,4 +36,5 @@
     <string name="set">Set</string>
     <string name="notification_settings">Notification Settings</string>
     <string name="choose_from_below">Choose from below:</string>
+    <string name="reset_chart">Reset Chart</string>
 </resources>

@@ -2,6 +2,7 @@ package com.lightit.fragment;
 
 import android.content.Context;
 import android.graphics.drawable.TransitionDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,9 @@ import android.support.v4.app.FragmentManager;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,7 +20,15 @@ import android.widget.ImageView;
 import com.lightit.MainActivity;
 import com.lightit.R;
 import com.lightit.database.Day;
+import com.lightit.dialog.SetWattageDialog;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -26,7 +38,7 @@ import java.util.Locale;
  * {@link HomeFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private final String TAG = HomeFragment.class.getSimpleName();
 
@@ -44,51 +56,14 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+        setHasOptionsMenu(true);
 
         if (mListener != null) {
             mListener.onFragmentInteraction("Home");
         }
 
         image_light = rootView.findViewById(R.id.image_light);
-
-        image_light.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (!lightIsOn) {
-                    ((TransitionDrawable) image_light.getDrawable()).startTransition(3000);
-
-                    startTime = System.currentTimeMillis();
-                    Log.i(TAG, "Start time: " + String.valueOf(startTime));
-
-                    lightIsOn = true;
-                } else {
-                    ((TransitionDrawable) image_light.getDrawable()).resetTransition();
-
-                    long stopTime = System.currentTimeMillis();
-                    Log.i(TAG, "Stop time: " + String.valueOf(stopTime));
-
-                    long totalTime = stopTime - startTime;
-
-                    if (MainActivity.dayRoomDatabase.dayDao().getLatestDate() != null) {
-                        if (MainActivity.dayRoomDatabase.dayDao().getLatestDate().equals(getCurrentDate())) {
-                            MainActivity.dayRoomDatabase.dayDao().updateTime(getCurrentDate(), totalTime / 1000);
-                            Log.i(TAG, "Updated time: " + MainActivity.dayRoomDatabase.dayDao().getTotalTimeOfDate(getCurrentDate()));
-                        }
-                    } else {
-                        Day day = new Day();
-                        day.setDate(getCurrentDate());
-                        day.setWeekDay(getCurrentDay());
-                        day.setTotalTime(0);
-                        day.setWeekNumber(getCurrentWeekNumber());
-                        MainActivity.dayRoomDatabase.dayDao().addDay(day);
-                    }
-
-                    lightIsOn = false;
-                }
-
-            }
-        });
+        image_light.setOnClickListener(this);
 
         FragmentManager fragmentManager = getChildFragmentManager();
 
@@ -99,6 +74,27 @@ public class HomeFragment extends Fragment {
         fragmentManager.beginTransaction().replace(R.id.container_viewPager, viewPagerFragment).commit();
 
         return rootView;
+    }
+
+    // MENU
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_home, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        FragmentManager fragmentManager = getFragmentManager();
+
+        if (fragmentManager != null) {
+            if (item.getItemId() == R.id.action_setWattage) {
+                SetWattageDialog setWattageDialog = SetWattageDialog.newInstance();
+                setWattageDialog.setTargetFragment(HomeFragment.this, 300);
+                setWattageDialog.show(fragmentManager, "dialog_choose_watt");
+            }
+        }
+
+        return true;
     }
 
     @Override
@@ -118,12 +114,53 @@ public class HomeFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
+    @Override
+    public void onClick(View v) {
+        String server = "192.168.1.8";
+        if (v == image_light) {
+            if (!lightIsOn) {
+                ((TransitionDrawable) image_light.getDrawable()).startTransition(3000);
+
+                startTime = System.currentTimeMillis();
+                Log.i(TAG, "Start time: " + String.valueOf(startTime));
+
+                lightIsOn = true;
+
+                image_light.setEnabled(false);
+
+                TaskEsp taskEsp = new TaskEsp(server + "/2/on");
+                taskEsp.execute();
+            } else {
+                ((TransitionDrawable) image_light.getDrawable()).resetTransition();
+
+                long stopTime = System.currentTimeMillis();
+                Log.i(TAG, "Stop time: " + String.valueOf(stopTime));
+
+                long totalTime = stopTime - startTime;
+
+                if (MainActivity.dayRoomDatabase.dayDao().getLatestDate() != null) {
+                    if (MainActivity.dayRoomDatabase.dayDao().getLatestDate().equals(getCurrentDate())) {
+                        MainActivity.dayRoomDatabase.dayDao().updateTime(getCurrentDate(), totalTime / 1000);
+                        Log.i(TAG, "Updated time: " + MainActivity.dayRoomDatabase.dayDao().getTotalTimeOfDate(getCurrentDate()));
+                    }
+                } else {
+                    Day day = new Day();
+                    day.setDate(getCurrentDate());
+                    day.setWeekDay(getCurrentDay());
+                    day.setTotalTime(0);
+                    day.setWeekNumber(getCurrentWeekNumber());
+                    MainActivity.dayRoomDatabase.dayDao().addDay(day);
+                }
+
+                lightIsOn = false;
+                image_light.setEnabled(false);
+
+                TaskEsp taskEsp = new TaskEsp(server + "/2/off");
+                taskEsp.execute();
+            }
+        }
+    }
+
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(String title);
     }
@@ -139,5 +176,50 @@ public class HomeFragment extends Fragment {
 
     private int getCurrentWeekNumber() {
         return Calendar.getInstance().get(Calendar.WEEK_OF_YEAR);
+    }
+
+
+    private class TaskEsp extends AsyncTask<Void, Void, String> {
+
+        private String server;
+
+        TaskEsp(String server) {
+            this.server = server;
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            final String p = "http://" + server;
+            String serverResponse = "";
+
+            try {
+                HttpURLConnection httpURLConnection = (HttpURLConnection) (new URL(p).openConnection());
+
+                if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+
+                    InputStream inputStream = null;
+                    inputStream = httpURLConnection.getInputStream();
+                    BufferedReader bufferedReader =
+                            new BufferedReader(new InputStreamReader(inputStream));
+                    serverResponse = bufferedReader.readLine();
+
+                    inputStream.close();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                serverResponse = e.getMessage();
+            } catch (IOException e) {
+                e.printStackTrace();
+                serverResponse = e.getMessage();
+            }
+
+            Log.i(TAG, "serverResponse: " + serverResponse);
+            return serverResponse;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            image_light.setEnabled(true);
+        }
     }
 }

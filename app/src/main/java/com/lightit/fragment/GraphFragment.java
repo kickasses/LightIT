@@ -57,12 +57,11 @@ public class GraphFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_graph, container, false);
+        setHasOptionsMenu(true);
 
         if (mListener != null) {
             mListener.onFragmentInteraction("Graph");
         }
-
-        setHasOptionsMenu(true);
 
         // *** TOP LINE CHART ***
         chartTop = rootView.findViewById(R.id.chart_top);

@@ -10,7 +10,7 @@
         android:id="@+id/chooseWatt_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/set_device_wattage"
+        android:text="@string/wattage"
         android:textColor="@android:color/black"
         android:textSize="18sp" />
 

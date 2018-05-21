@@ -15,13 +15,13 @@ import android.view.MenuItem;
 import com.lightit.database.DayRoomDatabase;
 import com.lightit.fragment.GraphFragment;
 import com.lightit.fragment.HomeFragment;
-import com.lightit.fragment.SettingsFragment;
+import com.lightit.fragment.NotificationFragment;
 import com.lightit.fragment.WifiFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GraphFragment.OnFragmentInteractionListener
         , WifiFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener,
-        SettingsFragment.OnFragmentInteractionListener {
+        NotificationFragment.OnFragmentInteractionListener {
 
     private FragmentManager mFragmentManager;
     public static DayRoomDatabase dayRoomDatabase;
@@ -83,9 +83,9 @@ public class MainActivity extends AppCompatActivity
                 GraphFragment graphFragment = new GraphFragment();
                 mFragmentManager.beginTransaction().replace(R.id.fragment_container, graphFragment).addToBackStack(null).commit();
                 break;
-            case R.id.nav_settings:
-                SettingsFragment settingsFragment = new SettingsFragment();
-                mFragmentManager.beginTransaction().replace(R.id.fragment_container, settingsFragment).addToBackStack(null).commit();
+            case R.id.nav_notification:
+                NotificationFragment notificationFragment = new NotificationFragment();
+                mFragmentManager.beginTransaction().replace(R.id.fragment_container, notificationFragment).addToBackStack(null).commit();
                 break;
         }
 
