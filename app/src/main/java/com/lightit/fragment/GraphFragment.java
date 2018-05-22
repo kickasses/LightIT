@@ -37,8 +37,7 @@ import lecho.lib.hellocharts.view.LineChartView;
  */
 public class GraphFragment extends Fragment {
 
-    public final static String[] months = new String[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
-            "Sep", "Oct", "Nov", "Dec",};
+    public final static String[] weeks = new String[52];
 
     public final static String[] days = new String[]{"Mon", "Tue", "Wen", "Thu", "Fri", "Sat", "Sun",};
 
@@ -61,6 +60,10 @@ public class GraphFragment extends Fragment {
 
         if (mListener != null) {
             mListener.onFragmentInteraction("Graph");
+        }
+
+        for (int i = 0; i < 52; i++) {
+            weeks[i] = String.valueOf(i + 1);
         }
 
         // *** TOP LINE CHART ***
@@ -110,7 +113,7 @@ public class GraphFragment extends Fragment {
     private void generateColumnData() {
 
         int numSubColumns = 1;
-        int numColumns = months.length;
+        int numColumns = weeks.length;
 
         List<AxisValue> axisValues = new ArrayList<>();
         List<Column> columns = new ArrayList<>();
@@ -122,7 +125,7 @@ public class GraphFragment extends Fragment {
                 values.add(new SubcolumnValue((float) Math.random() * 50f + 5, ChartUtils.pickColor()));
             }
 
-            axisValues.add(new AxisValue(i).setLabel(months[i]));
+            axisValues.add(new AxisValue(i).setLabel(weeks[i]));
 
             columns.add(new Column(values).setHasLabelsOnlyForSelected(true));
         }

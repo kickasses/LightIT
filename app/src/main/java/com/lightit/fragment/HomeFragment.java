@@ -37,6 +37,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private final String TAG = HomeFragment.class.getSimpleName();
 
     private ImageView image_light;
+    private static boolean enableLightImage;
     private boolean lightIsOn = false;
     long startTime = 0;
 
@@ -110,47 +111,47 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         String onOff = "";
-        String server = "192.168.4.1";
+        final String server = "192.168.4.1";
         if (v == image_light) {
-            if (!lightIsOn) {
-                ((TransitionDrawable) image_light.getDrawable()).startTransition(3000);
+            if (enableLightImage) {
+                if (!lightIsOn) {
+                    ((TransitionDrawable) image_light.getDrawable()).startTransition(3000);
 
-                startTime = System.currentTimeMillis();
-                Log.i(TAG, "Start time: " + String.valueOf(startTime));
+                    startTime = System.currentTimeMillis();
+                    Log.i(TAG, "Start time: " + String.valueOf(startTime));
 
-                onOff = "/2/on";
-                lightIsOn = true;
-            } else {
-                ((TransitionDrawable) image_light.getDrawable()).resetTransition();
-
-                long stopTime = System.currentTimeMillis();
-                Log.i(TAG, "Stop time: " + String.valueOf(stopTime));
-
-                long totalTime = stopTime - startTime;
-
-                if (MainActivity.mDayRoomDatabase.dayDao().getLatestDate() != null) {
-                    if (MainActivity.mDayRoomDatabase.dayDao().getLatestDate().equals(getCurrentDate())) {
-                        MainActivity.mDayRoomDatabase.dayDao().updateTime(getCurrentDate(), totalTime / 1000);
-                        Log.i(TAG, "Updated time: " + MainActivity.mDayRoomDatabase.dayDao().getTotalTimeOfDate(getCurrentDate()));
-                    }
+                    onOff = "/2/on";
+                    lightIsOn = true;
                 } else {
-                    Day day = new Day();
-                    day.setDate(getCurrentDate());
-                    day.setWeekDay(getCurrentDay());
-                    day.setTotalTime(0);
-                    day.setWeekNumber(getCurrentWeekNumber());
-                    MainActivity.mDayRoomDatabase.dayDao().addDay(day);
+                    ((TransitionDrawable) image_light.getDrawable()).resetTransition();
+
+                    long stopTime = System.currentTimeMillis();
+                    Log.i(TAG, "Stop time: " + String.valueOf(stopTime));
+
+                    long totalTime = stopTime - startTime;
+
+                    if (MainActivity.mDayRoomDatabase.dayDao().getLatestDate() != null) {
+                        if (MainActivity.mDayRoomDatabase.dayDao().getLatestDate().equals(getCurrentDate())) {
+                            MainActivity.mDayRoomDatabase.dayDao().updateTime(getCurrentDate(), totalTime / 1000);
+                            Log.i(TAG, "Updated time: " + MainActivity.mDayRoomDatabase.dayDao().getTotalTimeOfDate(getCurrentDate()));
+                        }
+                    } else {
+                        Day day = new Day();
+                        day.setDate(getCurrentDate());
+                        day.setWeekDay(getCurrentDay());
+                        day.setTotalTime(0);
+                        day.setWeekNumber(getCurrentWeekNumber());
+                        MainActivity.mDayRoomDatabase.dayDao().addDay(day);
+                    }
+
+                    onOff = "/2/off";
+                    lightIsOn = false;
                 }
-
-                onOff = "/2/off";
-                lightIsOn = false;
             }
+            enableLightImage = false;
+            TaskEsp taskEsp = new TaskEsp(server + onOff);
+            taskEsp.execute();
         }
-
-        image_light.setEnabled(false);
-
-        TaskEsp taskEsp = new TaskEsp(server + onOff);
-        taskEsp.execute();
     }
 
     public interface OnFragmentInteractionListener {
@@ -170,8 +171,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         return Calendar.getInstance().get(Calendar.WEEK_OF_YEAR);
     }
 
-
-    private class TaskEsp extends AsyncTask<Void, Void, String> {
+    static class TaskEsp extends AsyncTask<Void, Void, String> {
 
         private String server;
 
@@ -204,13 +204,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 serverResponse = e.getMessage();
             }
 
-            Log.i(TAG, "serverResponse: " + serverResponse);
             return serverResponse;
         }
 
         @Override
         protected void onPostExecute(String s) {
-            image_light.setEnabled(true);
+            enableLightImage = true;
         }
     }
 }
