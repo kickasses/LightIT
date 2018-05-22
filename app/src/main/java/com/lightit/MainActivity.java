@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity
         NotificationFragment.OnFragmentInteractionListener {
 
     private FragmentManager mFragmentManager;
-    public static DayRoomDatabase dayRoomDatabase;
+    public static DayRoomDatabase mDayRoomDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(this);
 
-        dayRoomDatabase = Room.databaseBuilder(getApplicationContext(), DayRoomDatabase.class, "database")
+        mDayRoomDatabase = Room.databaseBuilder(getApplicationContext(), DayRoomDatabase.class, "database")
                 .allowMainThreadQueries().build();
     }
 

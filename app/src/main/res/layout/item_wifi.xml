@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:src="@drawable/locked_levels"
+        android:src="@drawable/open_levels"
         android:contentDescription="@string/image_des"/>
 
     <LinearLayout

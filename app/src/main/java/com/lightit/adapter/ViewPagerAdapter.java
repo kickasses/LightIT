@@ -14,7 +14,9 @@ import com.lightit.R;
 public class ViewPagerAdapter extends PagerAdapter {
 
     private Context context;
-    private String[] tips = {"tip1", "tip2", "tip3"};
+    private String[] tips = {"Even reducing your heating by as little as 1ºC can cut your annual bills up up to 10%.",
+            "Keeping a lid on saucepans reduces cooking time and saves energy.",
+            "An ideal fridge temperature is 4 or 5 degrees Celsius."};
 
     public ViewPagerAdapter(Context context) {
         this.context = context;

@@ -9,6 +9,8 @@
         android:id="@+id/image_light"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:contentDescription="@string/image_des"
         android:scaleType="centerInside"
         android:src="@drawable/transition" />
@@ -16,7 +18,7 @@
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="235dp"
         android:layout_below="@+id/image_light"
         android:layout_marginTop="16dp" />
 
@@ -35,7 +37,7 @@
     <FrameLayout
         android:id="@+id/container_viewPager"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="135dp"
         android:layout_below="@+id/text_title">
 
     </FrameLayout>

@@ -16,12 +16,8 @@ import com.lightit.R;
 
 public class LoginDialog extends DialogFragment {
 
-    private static final String TAG = LoginDialog.class.getSimpleName();
-
     private TextView mTextViewSSID;
     private EditText mEditTextPassword;
-    private TextView mTextViewConnect;
-    private TextView mTextViewCancel;
 
     public LoginDialog() {
         // Required empty public constructor
@@ -40,17 +36,16 @@ public class LoginDialog extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.dialog_login, container);
-
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // Get field from view
+
         mTextViewSSID = view.findViewById(R.id.text_dialog_SSID);
         mEditTextPassword = view.findViewById(R.id.editText_password);
-        mTextViewConnect = view.findViewById(R.id.text_dialog_connect);
-        mTextViewCancel = view.findViewById(R.id.text_dialog_cancel);
+        TextView mTextViewConnect = view.findViewById(R.id.text_dialog_connect);
+        TextView mTextViewCancel = view.findViewById(R.id.text_dialog_cancel);
 
         if (getArguments() != null) {
             String networkSSID = getArguments().getString("SSID");
@@ -92,6 +87,5 @@ public class LoginDialog extends DialogFragment {
         if (listener != null) {
             listener.onFinishLoginDialog(mTextViewSSID.getText().toString(), mEditTextPassword.getText().toString());
         }
-        dismiss();
     }
 }

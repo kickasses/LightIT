@@ -85,8 +85,8 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
         mScanResultAdapter.SetOnItemClickListener(new ScanResultAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                ScanResult scan_item = mScanResultAdapter.getScanItem(position);
-                showLoginDialog(scan_item.SSID);
+                ScanResult mSelectedScanItem = mScanResultAdapter.getScanItem(position);
+                showLoginDialog(mSelectedScanItem.SSID);
             }
         });
 
@@ -143,7 +143,6 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
         Log.i(TAG, "ssid:     " + SSID);
         Log.i(TAG, "password: " + password);
         connectToWifi(SSID, password);
-
     }
 
     public interface OnFragmentInteractionListener {
@@ -183,7 +182,7 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
         //For open network
         //wifiConf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
 
-        //For WPA network or hotspot(WPA2-PSK)
+        //For WPA network
         wifiConf.preSharedKey = "\"" + networkPassword + "\"";
 
         wifiConf.status = WifiConfiguration.Status.ENABLED;

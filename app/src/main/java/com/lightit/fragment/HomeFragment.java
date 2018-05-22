@@ -32,12 +32,6 @@ import java.net.URL;
 import java.util.Calendar;
 import java.util.Locale;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link HomeFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- */
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private final String TAG = HomeFragment.class.getSimpleName();
@@ -76,7 +70,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         return rootView;
     }
 
-    // MENU
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_home, menu);
@@ -116,7 +109,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        String server = "192.168.1.8";
+        String onOff = "";
+        String server = "192.168.4.1";
         if (v == image_light) {
             if (!lightIsOn) {
                 ((TransitionDrawable) image_light.getDrawable()).startTransition(3000);
@@ -124,12 +118,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 startTime = System.currentTimeMillis();
                 Log.i(TAG, "Start time: " + String.valueOf(startTime));
 
+                onOff = "/2/on";
                 lightIsOn = true;
-
-                image_light.setEnabled(false);
-
-                TaskEsp taskEsp = new TaskEsp(server + "/2/on");
-                taskEsp.execute();
             } else {
                 ((TransitionDrawable) image_light.getDrawable()).resetTransition();
 
@@ -138,10 +128,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                 long totalTime = stopTime - startTime;
 
-                if (MainActivity.dayRoomDatabase.dayDao().getLatestDate() != null) {
-                    if (MainActivity.dayRoomDatabase.dayDao().getLatestDate().equals(getCurrentDate())) {
-                        MainActivity.dayRoomDatabase.dayDao().updateTime(getCurrentDate(), totalTime / 1000);
-                        Log.i(TAG, "Updated time: " + MainActivity.dayRoomDatabase.dayDao().getTotalTimeOfDate(getCurrentDate()));
+                if (MainActivity.mDayRoomDatabase.dayDao().getLatestDate() != null) {
+                    if (MainActivity.mDayRoomDatabase.dayDao().getLatestDate().equals(getCurrentDate())) {
+                        MainActivity.mDayRoomDatabase.dayDao().updateTime(getCurrentDate(), totalTime / 1000);
+                        Log.i(TAG, "Updated time: " + MainActivity.mDayRoomDatabase.dayDao().getTotalTimeOfDate(getCurrentDate()));
                     }
                 } else {
                     Day day = new Day();
@@ -149,16 +139,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     day.setWeekDay(getCurrentDay());
                     day.setTotalTime(0);
                     day.setWeekNumber(getCurrentWeekNumber());
-                    MainActivity.dayRoomDatabase.dayDao().addDay(day);
+                    MainActivity.mDayRoomDatabase.dayDao().addDay(day);
                 }
 
+                onOff = "/2/off";
                 lightIsOn = false;
-                image_light.setEnabled(false);
-
-                TaskEsp taskEsp = new TaskEsp(server + "/2/off");
-                taskEsp.execute();
             }
         }
+
+        image_light.setEnabled(false);
+
+        TaskEsp taskEsp = new TaskEsp(server + onOff);
+        taskEsp.execute();
     }
 
     public interface OnFragmentInteractionListener {
@@ -197,8 +189,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                 if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 
-                    InputStream inputStream = null;
-                    inputStream = httpURLConnection.getInputStream();
+                    InputStream inputStream = httpURLConnection.getInputStream();
                     BufferedReader bufferedReader =
                             new BufferedReader(new InputStreamReader(inputStream));
                     serverResponse = bufferedReader.readLine();
