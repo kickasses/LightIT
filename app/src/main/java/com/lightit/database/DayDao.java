@@ -30,4 +30,7 @@ public interface DayDao {
 
     @Update
     void updateDay(Day day);
+
+    @Query("SELECT  SUM(TotalEnergy) FROM day WHERE Date LIKE '___' + :currentMonth + '%'")
+    float getTotalEnergyFromSpecificMonth(String currentMonth);
 }

@@ -115,7 +115,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         if (v == image_light) {
             if (enableLightImage) {
                 if (!lightIsOn) {
-                    ((TransitionDrawable) image_light.getDrawable()).startTransition(3000);
+                    ((TransitionDrawable) image_light.getDrawable()).startTransition(0);
 
                     startTime = System.currentTimeMillis();
                     Log.i(TAG, "Start time: " + String.valueOf(startTime));

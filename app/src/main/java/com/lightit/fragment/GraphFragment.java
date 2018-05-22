@@ -1,6 +1,7 @@
 package com.lightit.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -10,7 +11,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.lightit.MainActivity;
 import com.lightit.R;
 
 import java.util.ArrayList;
@@ -37,7 +40,9 @@ import lecho.lib.hellocharts.view.LineChartView;
  */
 public class GraphFragment extends Fragment {
 
-    public final static String[] weeks = new String[52];
+    public String[] weeks = new String[52];
+
+    public final String[] monthsNumber = new String[]{"01,", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"};
 
     public final static String[] days = new String[]{"Mon", "Tue", "Wen", "Thu", "Fri", "Sat", "Sun",};
 
@@ -62,7 +67,7 @@ public class GraphFragment extends Fragment {
             mListener.onFragmentInteraction("Graph");
         }
 
-        for (int i = 0; i < 52; i++) {
+        for (int i = 0; i < weeks.length; i++) {
             weeks[i] = String.valueOf(i + 1);
         }
 
@@ -111,7 +116,10 @@ public class GraphFragment extends Fragment {
     }
 
     private void generateColumnData() {
-
+        SharedPreferences getWattInfo = getContext().getSharedPreferences("WattInfo", Context.MODE_PRIVATE);
+        int watt = getWattInfo.getInt("wattage", 0);
+        String w = String.valueOf(watt);
+        Toast.makeText(getContext(), w, Toast.LENGTH_SHORT).show();
         int numSubColumns = 1;
         int numColumns = weeks.length;
 
@@ -122,6 +130,9 @@ public class GraphFragment extends Fragment {
 
             values = new ArrayList<>();
             for (int j = 0; j < numSubColumns; ++j) {
+                //float wattSum = MainActivity.mDayRoomDatabase.dayDao().getTotalEnergyFromSpecificMonth("05");
+                //String wattText = String.valueOf(wattSum);
+                //Toast.makeText(getContext(), wattText, Toast.LENGTH_SHORT).show();
                 values.add(new SubcolumnValue((float) Math.random() * 50f + 5, ChartUtils.pickColor()));
             }
 
