@@ -2,16 +2,16 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "0b5eef87669f6c14a98a7f94c30a1477",
+    "identityHash": "9691ecd6ec69882569992900a9e87b89",
     "entities": [
       {
         "tableName": "day",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `TotalTime` REAL NOT NULL, `TotalEnergy` REAL NOT NULL, `Date` TEXT, `WeekDay` TEXT, `WeekNumber` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`Date` TEXT NOT NULL, `TotalTime` REAL NOT NULL, `TotalEnergy` REAL NOT NULL, `WeekDay` TEXT, `WeekNumber` INTEGER NOT NULL, PRIMARY KEY(`Date`))",
         "fields": [
           {
-            "fieldPath": "ID",
-            "columnName": "ID",
-            "affinity": "INTEGER",
+            "fieldPath": "date",
+            "columnName": "Date",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -25,12 +25,6 @@
             "columnName": "TotalEnergy",
             "affinity": "REAL",
             "notNull": true
-          },
-          {
-            "fieldPath": "date",
-            "columnName": "Date",
-            "affinity": "TEXT",
-            "notNull": false
           },
           {
             "fieldPath": "weekDay",
@@ -47,9 +41,9 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "ID"
+            "Date"
           ],
-          "autoGenerate": true
+          "autoGenerate": false
         },
         "indices": [],
         "foreignKeys": []
@@ -57,7 +51,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"0b5eef87669f6c14a98a7f94c30a1477\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"9691ecd6ec69882569992900a9e87b89\")"
     ]
   }
 }

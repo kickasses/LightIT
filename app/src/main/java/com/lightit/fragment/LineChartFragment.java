@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.lightit.MainActivity;
 import com.lightit.R;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import lecho.lib.hellocharts.view.LineChartView;
  */
 public class LineChartFragment extends Fragment {
 
-    public final static String[] days = new String[]{"Mon", "Tue", "Wen", "Thu", "Fri", "Sat", "Sun",};
+    public final static String[] days = new String[]{"Sun", "Mon", "Tue", "Wen", "Thu", "Fri", "Sat"};
 
     private LineChartView lineChart;
     private LineChartData lineData;
@@ -74,7 +75,7 @@ public class LineChartFragment extends Fragment {
         lineChart.setViewportCalculationEnabled(false);
 
         // And set initial max viewport and current viewport- remember to set viewports after data.
-        Viewport v = new Viewport(0, 60, 6, 0);
+        Viewport v = new Viewport(0, 1500, 6, 0);
         lineChart.setMaximumViewport(v);
         lineChart.setCurrentViewport(v);
 
@@ -83,9 +84,11 @@ public class LineChartFragment extends Fragment {
         // Cancel last animation if not finished.
         lineChart.cancelDataAnimation();
 
-        for (PointValue value : line.getValues()) {
+        List<Float> energyListOfCurrentWeek = MainActivity.mDayDao.getTotalEnergyWeekList(HomeFragment.getCurrentWeekNumber());
+        for (int i = 0; i < energyListOfCurrentWeek.size(); ++i) {
             // Change target only for Y value.
-            value.setTarget(value.getX(), (float) Math.random() * 60);
+            PointValue value = line.getValues().get(i);
+            value.setTarget(value.getX(), energyListOfCurrentWeek.get(i));
         }
 
         // Start new data animation with 300ms duration;

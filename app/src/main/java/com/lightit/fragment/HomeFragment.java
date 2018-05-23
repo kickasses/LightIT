@@ -130,7 +130,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                     long totalTime = stopTime - startTime;
 
-                    if (MainActivity.mDayRoomDatabase.dayDao().getLatestDate() != null) {
+                   /* if (MainActivity.mDayRoomDatabase.dayDao().getLatestDate() != null) {
                         if (MainActivity.mDayRoomDatabase.dayDao().getLatestDate().equals(getCurrentDate())) {
                             MainActivity.mDayRoomDatabase.dayDao().updateTime(getCurrentDate(), totalTime / 1000);
                             Log.i(TAG, "Updated time: " + MainActivity.mDayRoomDatabase.dayDao().getTotalTimeOfDate(getCurrentDate()));
@@ -143,7 +143,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         day.setWeekNumber(getCurrentWeekNumber());
                         MainActivity.mDayRoomDatabase.dayDao().addDay(day);
                     }
-
+*/
                     onOff = "/2/off";
                     lightIsOn = false;
                 }
@@ -167,7 +167,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         return calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
     }
 
-    private int getCurrentWeekNumber() {
+    public static int getCurrentWeekNumber() {
         return Calendar.getInstance().get(Calendar.WEEK_OF_YEAR);
     }
 
