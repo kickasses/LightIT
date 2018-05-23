@@ -4,6 +4,13 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 @Entity(tableName = "day")
 public class Day {
 
@@ -11,10 +18,10 @@ public class Day {
     private int ID;
 
     @ColumnInfo(name = "TotalTime")
-    private int totalTime;
+    private float totalTime;
 
     @ColumnInfo(name = "TotalEnergy")
-    private double totalEnergy;
+    private float totalEnergy;
 
     @ColumnInfo(name = "Date")
     private String date;
@@ -28,10 +35,39 @@ public class Day {
     public Day() {
     }
 
-    public Day(String date, String weekDay, int weekNumber) {
+    private String getDayOfWeek(String date) {
+        String dayOfDate = "";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        Date date1;
+        try {
+            date1 = dateFormat.parse(date);
+            DateFormat dayFormate = new SimpleDateFormat("EEEE", Locale.getDefault());
+            dayOfDate = dayFormate.format(date1);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return dayOfDate;
+    }
+
+    private int getWeekNumberOfDate(String date) {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        Date date1;
+        try {
+            date1 = dateFormat.parse(date);
+            calendar.setTime(date1);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return calendar.get(Calendar.WEEK_OF_YEAR);
+    }
+
+    public Day(float totalTime, float totalEnergy, String date) {
+        this.totalEnergy = totalEnergy;
+        this.totalTime = totalTime;
         this.date = date;
-        this.weekDay = weekDay;
-        this.weekNumber = weekNumber;
+        this.weekDay = getDayOfWeek(date);
+        this.weekNumber = getWeekNumberOfDate(date);
     }
 
     public int getWeekNumber() {
@@ -58,19 +94,19 @@ public class Day {
         this.ID = ID;
     }
 
-    public int getTotalTime() {
+    public float getTotalTime() {
         return totalTime;
     }
 
-    public void setTotalTime(int totalTime) {
+    public void setTotalTime(float totalTime) {
         this.totalTime = totalTime;
     }
 
-    public double getTotalEnergy() {
+    public float getTotalEnergy() {
         return totalEnergy;
     }
 
-    public void setTotalEnergy(double totalEnergy) {
+    public void setTotalEnergy(float totalEnergy) {
         this.totalEnergy = totalEnergy;
     }
 

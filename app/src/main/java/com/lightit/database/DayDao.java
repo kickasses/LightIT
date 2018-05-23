@@ -32,6 +32,12 @@ public interface DayDao {
     @Query("UPDATE day SET TotalTime = TotalTime + :onTime WHERE Date = :date")
     void updateTime(String date, long onTime);
 
-    @Query("SELECT  SUM(TotalEnergy) FROM day WHERE Date LIKE '___' + :month + '%'")
-    float getTotalEnergyOfMonth(String month);
+    @Update
+    void updateDay(Day day);
+
+    @Query("SELECT SUM(TotalEnergy) FROM day WHERE WeekNumber LIKE :weekNumber")
+    float getTotalEnergyPerWeek(int weekNumber);
+
+    @Query("select TotalEnergy FROM day where WeekNumber = :weekNumber AND WeekDay = :weekDay")
+    float getTotalEnergyInWeekDay(int weekNumber, String weekDay);
 }
