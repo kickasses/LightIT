@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.lightit.database.DayDao;
 import com.lightit.database.DayRoomDatabase;
 import com.lightit.fragment.GraphFragment;
 import com.lightit.fragment.HomeFragment;
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity
 
     private FragmentManager mFragmentManager;
     public static DayRoomDatabase mDayRoomDatabase;
+    public static DayDao mDayDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity
 
         mDayRoomDatabase = Room.databaseBuilder(getApplicationContext(), DayRoomDatabase.class, "database")
                 .allowMainThreadQueries().build();
+        mDayDao = mDayRoomDatabase.dayDao();
     }
 
     @Override

@@ -28,6 +28,12 @@ public class Day {
     public Day() {
     }
 
+    public Day(String date, String weekDay, int weekNumber) {
+        this.date = date;
+        this.weekDay = weekDay;
+        this.weekNumber = weekNumber;
+    }
+
     public int getWeekNumber() {
         return weekNumber;
     }

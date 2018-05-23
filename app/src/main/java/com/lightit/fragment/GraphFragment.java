@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,9 +17,18 @@ import android.widget.Toast;
 
 import com.lightit.MainActivity;
 import com.lightit.R;
+import com.lightit.database.Day;
+import com.lightit.dialog.SetWattageDialog;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import lecho.lib.hellocharts.gesture.ZoomType;
 import lecho.lib.hellocharts.listener.ColumnChartOnValueSelectListener;
@@ -40,10 +51,9 @@ import lecho.lib.hellocharts.view.LineChartView;
  */
 public class GraphFragment extends Fragment {
 
+    private final String TAG = GraphFragment.class.getSimpleName();
+
     public String[] weeks = new String[52];
-
-    public final String[] monthsNumber = new String[]{"01,", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"};
-
     public final static String[] days = new String[]{"Mon", "Tue", "Wen", "Thu", "Fri", "Sat", "Sun",};
 
     private LineChartView chartTop;
@@ -52,10 +62,21 @@ public class GraphFragment extends Fragment {
     private LineChartData lineData;
     private ColumnChartData columnData;
 
+    private Context context;
     private OnFragmentInteractionListener mListener;
 
     public GraphFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        try {
+            context = getActivity();
+        } catch (NullPointerException npe) {
+            Log.e(TAG, "Error onCreate");
+        }
     }
 
     @Override
@@ -73,15 +94,91 @@ public class GraphFragment extends Fragment {
 
         // *** TOP LINE CHART ***
         chartTop = rootView.findViewById(R.id.chart_top);
-
         // Generate and set data for line chart
         generateInitialLineData();
 
         // *** BOTTOM COLUMN CHART ***
         chartBottom = rootView.findViewById(R.id.chart_bottom);
-
+        // Generate and set data for column chart
         generateColumnData();
+
+        // ********** REWRITE DATABASE **********
+        for (int i = 1; i < 6; i++) { // zmonth
+            if (i == 1) {
+                for (int day = 1; day < 32; day++) {
+                    //Log.d(TAG, String.format("%02d-%02d-%d", day, i, 2018));
+                    String date = String.format("%02d-%02d-%d", day, i, 2018);
+                    Day newDay = new Day(date, getDayOfWeek(date), getWeekNumberOfDate(date));
+                    MainActivity.mDayDao.insertDays(newDay);
+                }
+            }
+            if (i == 2) {
+                for (int day = 1; day < 29; day++) {
+                    //Log.d(TAG, String.format("%02d-%02d-%d", day, i, 2018));
+                    String date = String.format("%02d-%02d-%d", day, i, 2018);
+                    Day newDay = new Day(date, getDayOfWeek(date), getWeekNumberOfDate(date));
+                    MainActivity.mDayDao.insertDays(newDay);
+                }
+            }
+            if (i == 3) {
+                for (int day = 1; day < 32; day++) {
+                    //Log.d(TAG, String.format("%02d-%02d-%d", day, i, 2018));
+                    String date = String.format("%02d-%02d-%d", day, i, 2018);
+                    Day newDay = new Day(date, getDayOfWeek(date), getWeekNumberOfDate(date));
+                    MainActivity.mDayDao.insertDays(newDay);
+                }
+            }
+            if (i == 4) {
+                for (int day = 1; day < 31; day++) {
+                    //Log.d(TAG, String.format("%02d-%02d-%d", day, i, 2018));
+                    String date = String.format("%02d-%02d-%d", day, i, 2018);
+                    Day newDay = new Day(date, getDayOfWeek(date), getWeekNumberOfDate(date));
+                    MainActivity.mDayDao.insertDays(newDay);
+                }
+            }
+            if (i == 5) {
+                for (int day = 1; day < 23; day++) {
+                    //Log.d(TAG, String.format("%02d-%02d-%d", day, i, 2018));
+                    String date = String.format("%02d-%02d-%d", day, i, 2018);
+                    Day newDay = new Day(date, getDayOfWeek(date), getWeekNumberOfDate(date));
+                    MainActivity.mDayDao.insertDays(newDay);
+                }
+            }
+        }
+
+        List<Day> days = MainActivity.mDayDao.getAll();
+        for (Day day : days) {
+            Log.d(TAG, day.getDate() + " " + day.getWeekDay() + " week" + String.valueOf(day.getWeekNumber()));
+        }
+
         return rootView;
+    }
+
+    private String getDayOfWeek(String date) {
+        String dayOfDate = "";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        Date date1;
+        try {
+            date1 = dateFormat.parse(date);
+            DateFormat dayFormate = new SimpleDateFormat("EEEE", Locale.getDefault());
+            dayOfDate = dayFormate.format(date1);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return dayOfDate;
+    }
+
+    private int getWeekNumberOfDate(String date) {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        Date date1;
+        try {
+            date1 = dateFormat.parse(date);
+            calendar.setTime(date1);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return calendar.get(Calendar.WEEK_OF_YEAR);
     }
 
     @Override
@@ -116,10 +213,11 @@ public class GraphFragment extends Fragment {
     }
 
     private void generateColumnData() {
-        SharedPreferences getWattInfo = getContext().getSharedPreferences("WattInfo", Context.MODE_PRIVATE);
-        int watt = getWattInfo.getInt("wattage", 0);
-        String w = String.valueOf(watt);
-        Toast.makeText(getContext(), w, Toast.LENGTH_SHORT).show();
+
+        SharedPreferences getWattInfo = context.getSharedPreferences(SetWattageDialog.SHARED_WATT_NAME, Context.MODE_PRIVATE);
+        int wattage = getWattInfo.getInt(SetWattageDialog.WATTAGE, 0);
+        Log.d(TAG, "get wattage: " + wattage);
+
         int numSubColumns = 1;
         int numColumns = weeks.length;
 
@@ -130,9 +228,6 @@ public class GraphFragment extends Fragment {
 
             values = new ArrayList<>();
             for (int j = 0; j < numSubColumns; ++j) {
-                //float wattSum = MainActivity.mDayRoomDatabase.dayDao().getTotalEnergyFromSpecificMonth("05");
-                //String wattText = String.valueOf(wattSum);
-                //Toast.makeText(getContext(), wattText, Toast.LENGTH_SHORT).show();
                 values.add(new SubcolumnValue((float) Math.random() * 50f + 5, ChartUtils.pickColor()));
             }
 
