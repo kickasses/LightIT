@@ -23,11 +23,14 @@ public interface DayDao {
     int getTotalTimeOfDate(String date);
 
     @Query("UPDATE day SET TotalTime = TotalTime + :onTime WHERE Date = :date")
-    void updateTime(String date, long onTime);
+    void updateTimeOfDate(String date, long onTime);
 
     @Query("SELECT SUM(TotalEnergy) FROM day WHERE WeekNumber = :weekNumber")
     float getTotalEnergyPerWeek(int weekNumber);
 
-    @Query("select TotalEnergy FROM day where WeekNumber = :weekNumber")
+    @Query("SELECT TotalEnergy FROM day WHERE WeekNumber = :weekNumber")
     List<Float> getTotalEnergyWeekList(int weekNumber);
+
+    @Query("SELECT * FROM day WHERE Date= :date")
+    Day getDayOfDate(String date);
 }

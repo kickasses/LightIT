@@ -68,6 +68,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         ViewPagerFragment viewPagerFragment = new ViewPagerFragment();
         fragmentManager.beginTransaction().replace(R.id.container_viewPager, viewPagerFragment).commit();
 
+        for (Day day:MainActivity.mDayDao.getAll()){
+            Log.d(TAG,day.getDate());
+        }
+
         return rootView;
     }
 
@@ -130,20 +134,17 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                     long totalTime = stopTime - startTime;
 
-                   /* if (MainActivity.mDayRoomDatabase.dayDao().getLatestDate() != null) {
-                        if (MainActivity.mDayRoomDatabase.dayDao().getLatestDate().equals(getCurrentDate())) {
-                            MainActivity.mDayRoomDatabase.dayDao().updateTime(getCurrentDate(), totalTime / 1000);
-                            Log.i(TAG, "Updated time: " + MainActivity.mDayRoomDatabase.dayDao().getTotalTimeOfDate(getCurrentDate()));
-                        }
+                    if (MainActivity.mDayDao.getDayOfDate(getCurrentDate()) != null) {
+                        MainActivity.mDayDao.updateTimeOfDate(getCurrentDate(), totalTime / 1000);
+                        Log.i(TAG, "Updated time: " + MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate()));
+
                     } else {
                         Day day = new Day();
                         day.setDate(getCurrentDate());
-                        day.setWeekDay(getCurrentDay());
                         day.setTotalTime(0);
-                        day.setWeekNumber(getCurrentWeekNumber());
                         MainActivity.mDayRoomDatabase.dayDao().addDay(day);
                     }
-*/
+
                     onOff = "/2/off";
                     lightIsOn = false;
                 }
@@ -160,11 +161,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private String getCurrentDate() {
         return DateFormat.format("dd-MM-yyyy", new java.util.Date()).toString();
-    }
-
-    private String getCurrentDay() {
-        Calendar calendar = Calendar.getInstance();
-        return calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
     }
 
     public static int getCurrentWeekNumber() {
