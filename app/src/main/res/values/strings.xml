@@ -32,7 +32,7 @@
     <string name="_48w">"   "48 Watt</string>
     <string name="_72w">"   "72 Watt</string>
     <string name="_115w">" "115 Watt</string>
-    <string name="enter_device_wattage_or">Enter device wattage or</string>
+    <string name="enter_device_wattage_or">Enter your wattage</string>
     <string name="set">Set</string>
     <string name="notification_settings">Notification Settings</string>
     <string name="choose_from_below">Choose from below:</string>

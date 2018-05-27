@@ -30,7 +30,7 @@ import lecho.lib.hellocharts.view.LineChartView;
  */
 public class LineChartFragment extends Fragment {
 
-    public final static String[] days = new String[]{"Sun", "Mon", "Tue", "Wen", "Thu", "Fri", "Sat"};
+    public final static String[] days = new String[]{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
     private LineChartView lineChart;
     private LineChartData lineData;

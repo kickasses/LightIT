@@ -60,8 +60,7 @@ public class GraphFragment extends Fragment {
     private final String TAG = GraphFragment.class.getSimpleName();
 
     public String[] weeks = new String[getCurrentWeekNumber() + 1];
-    //public final static String[] days = new String[]{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",};
-    public final static String[] days = new String[]{"Sun", "Mon", "Tue", "Wen", "Thu", "Fri", "Sat"};
+    public final static String[] days = new String[]{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
     private int selectedValBottomChart;
 
     private LineChartView chartTop;
@@ -200,7 +199,7 @@ public class GraphFragment extends Fragment {
 
         lineData = new LineChartData(lines);
         lineData.setAxisXBottom(new Axis(axisValues).setHasLines(true));
-        lineData.setAxisYLeft(new Axis().setHasLines(true).setMaxLabelChars(3));
+        lineData.setAxisYLeft(new Axis().setHasLines(true).setMaxLabelChars(2));
 
         chartTop.setLineChartData(lineData);
 
@@ -276,7 +275,7 @@ public class GraphFragment extends Fragment {
             if (i == 1) {
                 for (int day = 1; day < 32; day++) {
                     int randomTimeInt = random.nextInt(86400);
-                    int totalEnergy = wattage * (randomTimeInt / 3600);
+                    int totalEnergy = wattage * (randomTimeInt / (float) 3600);
                     String date = String.format(Locale.US, "%02d-%02d-%d", day, i, 2018);
                     Day newDay = new Day(date, randomTimeInt, totalEnergy);
                     MainActivity.mDayDao.insertDays(newDay);
@@ -285,7 +284,7 @@ public class GraphFragment extends Fragment {
             if (i == 2) {
                 for (int day = 1; day < 29; day++) {
                     int randomTimeInt = random.nextInt(86400);
-                    int totalEnergy = wattage * (randomTimeInt / 3600);
+                    int totalEnergy = wattage * (randomTimeInt / (float) 3600);
                     //Log.d(TAG, String.format("%02d-%02d-%d", day, i, 2018));
                     String date = String.format(Locale.US, "%02d-%02d-%d", day, i, 2018);
                     Day newDay = new Day(date, randomTimeInt, totalEnergy);
@@ -295,7 +294,7 @@ public class GraphFragment extends Fragment {
             if (i == 3) {
                 for (int day = 1; day < 32; day++) {
                     int randomTimeInt = random.nextInt(86400);
-                    int totalEnergy = wattage * (randomTimeInt / 3600);
+                    int totalEnergy = wattage * (randomTimeInt / (float) 3600);
                     //Log.d(TAG, String.format("%02d-%02d-%d", day, i, 2018));
                     String date = String.format(Locale.US, "%02d-%02d-%d", day, i, 2018);
                     Day newDay = new Day(date, randomTimeInt, totalEnergy);
@@ -305,7 +304,7 @@ public class GraphFragment extends Fragment {
             if (i == 4) {
                 for (int day = 1; day < 31; day++) {
                     int randomTimeInt = random.nextInt(86400);
-                    int totalEnergy = wattage * (randomTimeInt / 3600);
+                    int totalEnergy = wattage * (randomTimeInt / (float) 3600);
                     //Log.d(TAG, String.format("%02d-%02d-%d", day, i, 2018));
                     String date = String.format(Locale.US, "%02d-%02d-%d", day, i, 2018);
                     Day newDay = new Day(date, randomTimeInt, totalEnergy);
@@ -315,7 +314,7 @@ public class GraphFragment extends Fragment {
             if (i == 5) {
                 for (int day = 1; day < 23; day++) {
                     int randomTimeInt = random.nextInt(86400);
-                    int totalEnergy = wattage * (randomTimeInt / 3600);
+                    int totalEnergy = wattage * (randomTimeInt / (float) 3600);
                     //Log.d(TAG, String.format("%02d-%02d-%d", day, i, 2018));
                     String date = String.format(Locale.US, "%02d-%02d-%d", day, i, 2018);
                     Day newDay = new Day(date, randomTimeInt, totalEnergy);

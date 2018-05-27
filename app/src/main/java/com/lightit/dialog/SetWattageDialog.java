@@ -10,8 +10,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lightit.R;
 
@@ -55,6 +57,14 @@ public class SetWattageDialog extends DialogFragment implements View.OnClickList
         TextView mWattage_cancel = rootView.findViewById(R.id.cancel_set_wattage);
         mWattage_set.setOnClickListener(this);
         mWattage_cancel.setOnClickListener(this);
+
+        mWattage_input.requestFocus();
+        if (getDialog().getWindow() != null) {
+            getDialog().getWindow().setSoftInputMode(
+                    WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        } else {
+            Toast.makeText(getContext(), "Cannot start auto keyboard", Toast.LENGTH_SHORT).show();
+        }
 
         return rootView;
     }

@@ -1,10 +1,12 @@
 package com.lightit.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.format.DateFormat;
@@ -32,19 +34,33 @@ import java.net.URL;
 import java.util.Calendar;
 import java.util.Locale;
 
+import static com.lightit.dialog.SetWattageDialog.SHARED_WATT_NAME;
+import static com.lightit.dialog.SetWattageDialog.WATTAGE;
+
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private final String TAG = HomeFragment.class.getSimpleName();
 
     private ImageView image_light;
-    private static boolean enableLightImage;
+    private static boolean enableLightImage = true;
     private boolean lightIsOn = false;
     long startTime = 0;
 
     private OnFragmentInteractionListener mListener;
+    private Context context;
 
     public HomeFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        try {
+            context = getActivity();
+        } catch (NullPointerException npe) {
+            Log.e(TAG, "Error onCreate");
+        }
     }
 
     @Override
@@ -52,7 +68,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         setHasOptionsMenu(true);
-
         if (mListener != null) {
             mListener.onFragmentInteraction("Home");
         }
@@ -67,10 +82,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         ViewPagerFragment viewPagerFragment = new ViewPagerFragment();
         fragmentManager.beginTransaction().replace(R.id.container_viewPager, viewPagerFragment).commit();
-
-        for (Day day:MainActivity.mDayDao.getAll()){
-            Log.d(TAG,day.getDate());
-        }
 
         return rootView;
     }
@@ -125,7 +136,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     Log.i(TAG, "Start time: " + String.valueOf(startTime));
 
                     onOff = "/2/on";
-                    lightIsOn = true;
                 } else {
                     ((TransitionDrawable) image_light.getDrawable()).resetTransition();
 
@@ -135,8 +145,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     long totalTime = stopTime - startTime;
 
                     if (MainActivity.mDayDao.getDayOfDate(getCurrentDate()) != null) {
-                        MainActivity.mDayDao.updateTimeOfDate(getCurrentDate(), totalTime / 1000);
-                        Log.i(TAG, "Updated time: " + MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate()));
+                        // Get shared wattage
+                        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_WATT_NAME, Context.MODE_PRIVATE);
+                        int wattage = sharedPreferences.getInt(WATTAGE, 0);
+
+                        // Update time and energy
+                        MainActivity.mDayDao.updateTimeOfDate(getCurrentDate(), totalTime / (float) 1000);
+                        //MainActivity.mDayDao.updateEnergyOfDate(getCurrentDate(), wattage * (totalTime / 3600));
+                        float theTime = MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate());
+                        MainActivity.mDayDao.setEnergyOfDate(getCurrentDate(), wattage * (theTime / (float) 3600));
+
+                        Log.i(TAG, "Updated time  : " + MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate()));
+                        Log.i(TAG, "Updated energy: " + MainActivity.mDayDao.getTotalEnergyOfDate(getCurrentDate()));
 
                     } else {
                         Day day = new Day();
@@ -146,8 +166,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     }
 
                     onOff = "/2/off";
-                    lightIsOn = false;
                 }
+                lightIsOn = !lightIsOn;
             }
             enableLightImage = false;
             TaskEsp taskEsp = new TaskEsp(server + onOff);
@@ -192,9 +212,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                     inputStream.close();
                 }
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-                serverResponse = e.getMessage();
             } catch (IOException e) {
                 e.printStackTrace();
                 serverResponse = e.getMessage();
