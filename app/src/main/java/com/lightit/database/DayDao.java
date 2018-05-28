@@ -42,4 +42,13 @@ public interface DayDao {
 
     @Query("SELECT * FROM day WHERE Date= :date")
     Day getDayOfDate(String date);
+
+    @Query("UPDATE day SET WeekNumber = :weekNumber WHERE Date = :date")
+    void updateWeekNumber(int weekNumber, String date);
+
+    @Query("UPDATE day SET WeekDay = :weekDay WHERE WeekNumber = :weekNumber")
+    void updateWeekday(String weekDay, int weekNumber);
+
+    @Query("select TotalEnergy FROM day where WeekNumber = :weekNumber AND WeekDay = :weekDay")
+    float getTotalEnergyInWeekDay(int weekNumber, String weekDay);
 }
