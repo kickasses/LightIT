@@ -59,8 +59,8 @@ public class GraphFragment extends Fragment {
     private final String TAG = GraphFragment.class.getSimpleName();
 
     public String[] weeks = new String[Calendar.getInstance().get(Calendar.WEEK_OF_YEAR) + 1];
-    public final static String[] days = new String[]{"måndag", "tisdag", "onsdag", "torsdag", "fredag", "lördag"
-            , "söndag",};
+    public final static String[] days = new String[]{"Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"
+            , "Sun",};
     private int selectedValBottomChart;
 
     private LineChartView chartTop;
@@ -298,7 +298,7 @@ public class GraphFragment extends Fragment {
         chartTop.setViewportCalculationEnabled(false);
 
         // And set initial max viewport and current viewport- remember to set viewports after data.
-        Viewport v = new Viewport(0, 5, 6, 0);
+        Viewport v = new Viewport(0, 50, 6, 0);
         chartTop.setMaximumViewport(v);
         chartTop.setCurrentViewport(v);
 
@@ -317,26 +317,26 @@ public class GraphFragment extends Fragment {
             //String s = String.valueOf(value.getX());
             //Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
             if (value.getX() == 0.0) {
-                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "måndag"));
+                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Monday"));
                 Log.d(TAG,String.valueOf(MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "måndag")));
             }
             if (value.getX() == 1.0) {
-                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "tisdag"));
+                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Tuesday"));
             }
             if (value.getX() == 2.0) {
-                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "onsdag"));
+                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Wednesday"));
             }
             if (value.getX() == 3.0) {
-                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "torsdag"));
+                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Thursday"));
             }
             if (value.getX() == 4.0) {
-                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "fredag"));
+                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Friday"));
             }
             if (value.getX() == 5.0) {
-                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "lördag"));
+                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Saturday"));
             }
             if (value.getX() == 6.0) {
-                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "söndag"));
+                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Sunday"));
             }
         }
 

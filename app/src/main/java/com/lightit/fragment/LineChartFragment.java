@@ -4,14 +4,17 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.lightit.MainActivity;
 import com.lightit.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import lecho.lib.hellocharts.gesture.ZoomType;
@@ -30,7 +33,7 @@ import lecho.lib.hellocharts.view.LineChartView;
  */
 public class LineChartFragment extends Fragment {
 
-    public final static String[] days = new String[]{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+    public final static String[] days = new String[]{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
 
     private LineChartView lineChart;
     private LineChartData lineData;
@@ -75,24 +78,51 @@ public class LineChartFragment extends Fragment {
         lineChart.setViewportCalculationEnabled(false);
 
         // And set initial max viewport and current viewport- remember to set viewports after data.
-        Viewport v = new Viewport(0, 1500, 6, 0);
+        Viewport v = new Viewport(0, 50, 6, 0);
         lineChart.setMaximumViewport(v);
         lineChart.setCurrentViewport(v);
 
-        lineChart.setZoomType(ZoomType.HORIZONTAL);
-
+        lineChart.setZoomType(ZoomType.HORIZONTAL_AND_VERTICAL);
+        lineChart.setScrollEnabled(true);
         // Cancel last animation if not finished.
         lineChart.cancelDataAnimation();
 
+
         List<Float> energyListOfCurrentWeek = MainActivity.mDayDao.getTotalEnergyWeekList(HomeFragment.getCurrentWeekNumber());
-        for (int i = 0; i < energyListOfCurrentWeek.size(); ++i) {
+        for (int i = 0; i < 7; ++i) {
             // Change target only for Y value.
             PointValue value = line.getValues().get(i);
-            value.setTarget(value.getX(), energyListOfCurrentWeek.get(i));
+            //value.setTarget(value.getX(), energyListOfCurrentWeek.get(i));
+            if (value.getX() == 0.0) {
+
+                value.setTarget(value.getX(), MainActivity.mDayDao.getLatestWeekdayEnergy(getCurrentWeekNumber(), "Monday"));
+            }
+            if (value.getX() == 1.0) {
+
+                value.setTarget(value.getX(), MainActivity.mDayDao.getLatestWeekdayEnergy(getCurrentWeekNumber(), "Tuesday"));
+            }
+            if (value.getX() == 2.0) {
+                value.setTarget(value.getX(), MainActivity.mDayDao.getLatestWeekdayEnergy(getCurrentWeekNumber(), "Wednesday"));
+            }
+            if (value.getX() == 3.0) {
+                value.setTarget(value.getX(), MainActivity.mDayDao.getLatestWeekdayEnergy(getCurrentWeekNumber(),"Thursday"));
+            }
+            if (value.getX() == 4.0) {
+                value.setTarget(value.getX(), MainActivity.mDayDao.getLatestWeekdayEnergy(getCurrentWeekNumber(),"Friday"));
+            }
+            if (value.getX() == 5.0) {
+                value.setTarget(value.getX(), MainActivity.mDayDao.getLatestWeekdayEnergy(getCurrentWeekNumber(),"Saturday"));
+            }
+            if (value.getX() == 6.0) {
+                value.setTarget(value.getX(), MainActivity.mDayDao.getLatestWeekdayEnergy(getCurrentWeekNumber(),"Sunday"));
+            }
         }
 
         // Start new data animation with 300ms duration;
         lineChart.startDataAnimation(300);
+    }
+    public static int getCurrentWeekNumber() {
+        return Calendar.getInstance().get(Calendar.WEEK_OF_YEAR);
     }
 
 }

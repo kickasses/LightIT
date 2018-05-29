@@ -1,7 +1,10 @@
 package com.lightit.fragment;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.AsyncTask;
@@ -129,88 +132,76 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         String onOff = "";
         final String server = "192.168.4.1";
+        LineChartFragment lineChartFragment = new LineChartFragment();
+        FragmentManager fragmentManager = getChildFragmentManager();
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_WATT_NAME, Context.MODE_PRIVATE);
         int wattage = sharedPreferences.getInt(WATTAGE, 0);
-        if (v == image_light) {
-            if (enableLightImage) {
-                if (!lightIsOn) {
-                    ((TransitionDrawable) image_light.getDrawable()).startTransition(0);
+        if (wattage <= 0){
+            Toast.makeText(context, "Enter a valid wattage", Toast.LENGTH_SHORT).show();
+        }else {
+            if (v == image_light) {
+                if (enableLightImage) {
+                    if (!lightIsOn) {
+                        ((TransitionDrawable) image_light.getDrawable()).startTransition(0);
 
-                    startTime = System.currentTimeMillis();
-                    Log.i(TAG, "Start time: " + String.valueOf(startTime));
+                        startTime = System.currentTimeMillis();
+                        Log.i(TAG, "Start time: " + String.valueOf(startTime));
 
-                    onOff = "/2/on";
-                } else {
-                    ((TransitionDrawable) image_light.getDrawable()).resetTransition();
-
-                    long stopTime = System.currentTimeMillis();
-                    Log.i(TAG, "Stop time: " + String.valueOf(stopTime));
-
-                    long totalTime = stopTime - startTime;
-
-                    if (MainActivity.mDayDao.getDayOfDate(getCurrentDate()) != null) {
-                        // Get shared wattage
-
-
-                        // Update time and energy
-                        MainActivity.mDayDao.updateTimeOfDate(getCurrentDate(), totalTime / (float) 1000);
-                        MainActivity.mDayDao.updateEnergyOfDate(getCurrentDate(), wattage * (totalTime / 3600));
-                        float theTime = MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate());
-                        MainActivity.mDayDao.setEnergyOfDate(getCurrentDate(), wattage * (theTime / (float) 3600));
-
-                        Log.i(TAG, "Updated time  : " + MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate()));
-                        Log.i(TAG, "Updated energy: " + MainActivity.mDayDao.getTotalEnergyOfDate(getCurrentDate()));
-                        Log.i(TAG, "weekday: " + Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
+                        onOff = "/2/on";
                     } else {
+                        ((TransitionDrawable) image_light.getDrawable()).resetTransition();
 
-                        Toast.makeText(getContext(), "made a new day", Toast.LENGTH_SHORT).show();
-                        Day day = new Day();
-                        MainActivity.mDayDao.updateTimeOfDate(getCurrentDate(), totalTime / (float) 1000);
-                        MainActivity.mDayDao.updateEnergyOfDate(getCurrentDate(), wattage * (totalTime / 3600));
-                        float theTime = MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate());
-                        MainActivity.mDayDao.setEnergyOfDate(getCurrentDate(), wattage * (theTime / (float) 3600));
+                        long stopTime = System.currentTimeMillis();
+                        Log.i(TAG, "Stop time: " + String.valueOf(stopTime));
 
-                        Log.i(TAG, "Updated time  : " + MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate()));
-                        Log.i(TAG, "Updated energy: " + MainActivity.mDayDao.getTotalEnergyOfDate(getCurrentDate()));
-                        Log.i(TAG, "weekday: " + Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
-                        MainActivity.mDayRoomDatabase.dayDao().addDay(day);
-                        day.setDate(getCurrentDate());
-                        day.setWeekNumber(getCurrentWeekNumber());
+                        long totalTime = stopTime - startTime;
+
+                        if (MainActivity.mDayDao.getDayOfDate(getCurrentDate()) != null) {
+                            // Get shared wattage
 
 
-                        int weekdayNumber = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-                        Log.i(TAG, "weekdayNUMBER: " + weekdayNumber);
-                        if (weekdayNumber == 1){
-                            day.setWeekDay("söndag");
+                            // Update time and energy
+                            MainActivity.mDayDao.updateTimeOfDate(getCurrentDate(), totalTime / (float) 1000);
+                            MainActivity.mDayDao.updateEnergyOfDate(getCurrentDate(), wattage * (totalTime / 3600));
+                            float theTime = MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate());
+                            MainActivity.mDayDao.setEnergyOfDate(getCurrentDate(), wattage * (theTime / (float) 3600));
+
+                            Log.i(TAG, "Updated time  : " + MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate()));
+                            Log.i(TAG, "Updated energy: " + MainActivity.mDayDao.getTotalEnergyOfDate(getCurrentDate()));
+                            Log.i(TAG, "weekday: " + Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
+                            fragmentManager.beginTransaction().replace(R.id.fragment_container, lineChartFragment).commit();
+                        } else {
+
+                            Toast.makeText(getContext(), "made a new day", Toast.LENGTH_SHORT).show();
+                            Day day = new Day(getCurrentDate());
+
+                            //day.setDate(getCurrentDate());
+                            //day.setWeekNumber(getCurrentWeekNumber());
+                            MainActivity.mDayRoomDatabase.dayDao().addDay(day);
+
+                            MainActivity.mDayDao.updateTimeOfDate(getCurrentDate(), totalTime / (float) 1000);
+                            MainActivity.mDayDao.updateEnergyOfDate(getCurrentDate(), wattage * (totalTime / 3600));
+                            float theTime = MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate());
+                            MainActivity.mDayDao.setEnergyOfDate(getCurrentDate(), wattage * (theTime / (float) 3600));
+
+                            Log.i(TAG, "Updated time  : " + MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate()));
+                            Log.i(TAG, "Updated energy: " + MainActivity.mDayDao.getTotalEnergyOfDate(getCurrentDate()));
+                            Log.i(TAG, "weekday: " + Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
+
+                            int weekdayNumber = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+                            Log.i(TAG, "weekdayNUMBER: " + weekdayNumber);
+                            fragmentManager.beginTransaction().replace(R.id.fragment_container, lineChartFragment).commit();
+
                         }
-                        if (weekdayNumber == 2){
-                            day.setWeekDay("måndag");
-                        }
-                        if (weekdayNumber == 3){
-                            day.setWeekDay("tisdag");
-                        }
-                        if (weekdayNumber == 4){
-                            day.setWeekDay("onsdag");
-                        }
-                        if (weekdayNumber == 5){
-                            day.setWeekDay("torsdag");
-                        }
-                        if (weekdayNumber == 6){
-                            day.setWeekDay("fredag");
-                        }
-                        if (weekdayNumber == 7){
-                            day.setWeekDay("lördag");
-                        }
+                        onOff = "/2/off";
 
                     }
-
-                    onOff = "/2/off";
+                    lightIsOn = !lightIsOn;
                 }
-                lightIsOn = !lightIsOn;
+                enableLightImage = false;
+                TaskEsp taskEsp = new TaskEsp(server + onOff);
+                taskEsp.execute();
             }
-            enableLightImage = false;
-            TaskEsp taskEsp = new TaskEsp(server + onOff);
-            taskEsp.execute();
         }
     }
 

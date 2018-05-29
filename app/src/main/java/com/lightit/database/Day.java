@@ -35,6 +35,11 @@ public class Day {
 
     public Day() {
     }
+    public Day(String date){
+        this.date = date;
+        this.weekDay = getDayOfWeek(date);
+        this.weekNumber = getWeekNumberOfDate(date);
+    }
 
     @Ignore
     public Day(@NonNull String date, float totalTime, float totalEnergy) {
