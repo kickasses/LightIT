@@ -70,7 +70,7 @@ public class LineChartFragment extends Fragment {
 
         lineData = new LineChartData(lines);
         lineData.setAxisXBottom(new Axis(axisValues).setHasLines(true));
-        lineData.setAxisYLeft(new Axis().setHasLines(true).setMaxLabelChars(3));
+        lineData.setAxisYLeft(new Axis().setHasLines(true).setMaxLabelChars(5));
 
         lineChart.setLineChartData(lineData);
 

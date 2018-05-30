@@ -238,7 +238,7 @@ public class GraphFragment extends Fragment {
         columnData = new ColumnChartData(columns);
 
         columnData.setAxisXBottom(new Axis(axisValues).setHasLines(true));
-        columnData.setAxisYLeft(new Axis().setHasLines(true).setMaxLabelChars(2));
+        columnData.setAxisYLeft(new Axis().setHasLines(true).setMaxLabelChars(5));
 
         chartBottom.setColumnChartData(columnData);
 
@@ -291,7 +291,7 @@ public class GraphFragment extends Fragment {
 
         lineData = new LineChartData(lines);
         lineData.setAxisXBottom(new Axis(axisValues).setHasLines(true));
-        lineData.setAxisYLeft(new Axis().setHasLines(true).setMaxLabelChars(3));
+        lineData.setAxisYLeft(new Axis().setHasLines(true).setMaxLabelChars(5));
 
         chartTop.setLineChartData(lineData);
 

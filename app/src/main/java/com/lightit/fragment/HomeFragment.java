@@ -54,6 +54,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private OnFragmentInteractionListener mListener;
     private Context context;
 
+
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -66,6 +68,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         } catch (NullPointerException npe) {
             Log.e(TAG, "Error onCreate");
         }
+
+
     }
 
     @Override
@@ -76,6 +80,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         if (mListener != null) {
             mListener.onFragmentInteraction("Home");
         }
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_WATT_NAME, Context.MODE_PRIVATE);
 
         image_light = rootView.findViewById(R.id.image_light);
         image_light.setOnClickListener(this);
@@ -88,6 +93,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         ViewPagerFragment viewPagerFragment = new ViewPagerFragment();
         fragmentManager.beginTransaction().replace(R.id.container_viewPager, viewPagerFragment).commit();
 
+        boolean temp = sharedPreferences.getBoolean("lightBoolean", false);
+
+        if (temp == true) {
+            lightIsOn = true;
+            ((TransitionDrawable) image_light.getDrawable()).startTransition(0);
+        }
+        else {
+            lightIsOn = false;
+        }
         return rootView;
     }
 
@@ -148,7 +162,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                         startTime = System.currentTimeMillis();
                         Log.i(TAG, "Start time: " + String.valueOf(startTime));
-
+                        editor.putBoolean("lightBoolean", true);
+                        editor.apply();
                         onOff = "/2/on";
                     } else {
                         ((TransitionDrawable) image_light.getDrawable()).resetTransition();
@@ -157,7 +172,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         Log.i(TAG, "Stop time: " + String.valueOf(stopTime));
 
                         long totalTime = stopTime - startTime;
-
+                        editor.putBoolean("lightBoolean", false);
+                        editor.apply();
                         if (MainActivity.mDayDao.getDayOfDate(getCurrentDate()) != null) {
                             // Get shared wattage
 
