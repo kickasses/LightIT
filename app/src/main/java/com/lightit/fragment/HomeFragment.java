@@ -135,6 +135,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         LineChartFragment lineChartFragment = new LineChartFragment();
         FragmentManager fragmentManager = getChildFragmentManager();
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_WATT_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         int wattage = sharedPreferences.getInt(WATTAGE, 0);
         if (wattage <= 0){
             Toast.makeText(context, "Enter a valid wattage", Toast.LENGTH_SHORT).show();
@@ -143,6 +144,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 if (enableLightImage) {
                     if (!lightIsOn) {
                         ((TransitionDrawable) image_light.getDrawable()).startTransition(0);
+
 
                         startTime = System.currentTimeMillis();
                         Log.i(TAG, "Start time: " + String.valueOf(startTime));
@@ -170,6 +172,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                             Log.i(TAG, "Updated energy: " + MainActivity.mDayDao.getTotalEnergyOfDate(getCurrentDate()));
                             Log.i(TAG, "weekday: " + Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
                             fragmentManager.beginTransaction().replace(R.id.fragment_container, lineChartFragment).commit();
+
                         } else {
 
                             Toast.makeText(getContext(), "made a new day", Toast.LENGTH_SHORT).show();

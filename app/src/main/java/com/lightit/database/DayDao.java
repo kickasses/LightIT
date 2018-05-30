@@ -52,6 +52,7 @@ public interface DayDao {
     @Query("select TotalEnergy FROM day where WeekNumber = :weekNumber AND WeekDay = :weekDay")
     float getTotalEnergyInWeekDay(int weekNumber, String weekDay);
 
-    @Query("select TotalEnergy from day where WeekNumber = :weekNumber AND Weekday = :weekDay")
-    int getLatestWeekdayEnergy(int weekNumber, String weekDay);
+
+    @Query("Select max(TotalEnergy) From day Where WeekNumber = :weekNumber")
+    float getMaxTotalEnergyForWeek(int weekNumber);
 }

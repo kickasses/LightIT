@@ -78,7 +78,7 @@ public class LineChartFragment extends Fragment {
         lineChart.setViewportCalculationEnabled(false);
 
         // And set initial max viewport and current viewport- remember to set viewports after data.
-        Viewport v = new Viewport(0, 50, 6, 0);
+        Viewport v = new Viewport(0, MainActivity.mDayDao.getMaxTotalEnergyForWeek(getCurrentWeekNumber())  + MainActivity.mDayDao.getMaxTotalEnergyForWeek(getCurrentWeekNumber()) /10, 6, 0);
         lineChart.setMaximumViewport(v);
         lineChart.setCurrentViewport(v);
 
@@ -95,26 +95,26 @@ public class LineChartFragment extends Fragment {
             //value.setTarget(value.getX(), energyListOfCurrentWeek.get(i));
             if (value.getX() == 0.0) {
 
-                value.setTarget(value.getX(), MainActivity.mDayDao.getLatestWeekdayEnergy(getCurrentWeekNumber(), "Monday"));
+                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(getCurrentWeekNumber(), "Monday"));
             }
             if (value.getX() == 1.0) {
 
-                value.setTarget(value.getX(), MainActivity.mDayDao.getLatestWeekdayEnergy(getCurrentWeekNumber(), "Tuesday"));
+                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(getCurrentWeekNumber(), "Tuesday"));
             }
             if (value.getX() == 2.0) {
-                value.setTarget(value.getX(), MainActivity.mDayDao.getLatestWeekdayEnergy(getCurrentWeekNumber(), "Wednesday"));
+                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(getCurrentWeekNumber(), "Wednesday"));
             }
             if (value.getX() == 3.0) {
-                value.setTarget(value.getX(), MainActivity.mDayDao.getLatestWeekdayEnergy(getCurrentWeekNumber(),"Thursday"));
+                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(getCurrentWeekNumber(),"Thursday"));
             }
             if (value.getX() == 4.0) {
-                value.setTarget(value.getX(), MainActivity.mDayDao.getLatestWeekdayEnergy(getCurrentWeekNumber(),"Friday"));
+                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(getCurrentWeekNumber(),"Friday"));
             }
             if (value.getX() == 5.0) {
-                value.setTarget(value.getX(), MainActivity.mDayDao.getLatestWeekdayEnergy(getCurrentWeekNumber(),"Saturday"));
+                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(getCurrentWeekNumber(),"Saturday"));
             }
             if (value.getX() == 6.0) {
-                value.setTarget(value.getX(), MainActivity.mDayDao.getLatestWeekdayEnergy(getCurrentWeekNumber(),"Sunday"));
+                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(getCurrentWeekNumber(),"Sunday"));
             }
         }
 

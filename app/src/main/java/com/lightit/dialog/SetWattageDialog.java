@@ -51,7 +51,6 @@ public class SetWattageDialog extends DialogFragment implements View.OnClickList
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.dialog_set_wattage, container, false);
-
         mWattage_input = rootView.findViewById(R.id.editText_watt_input);
         TextView mWattage_set = rootView.findViewById(R.id.set_wattage);
         TextView mWattage_cancel = rootView.findViewById(R.id.cancel_set_wattage);
@@ -65,7 +64,9 @@ public class SetWattageDialog extends DialogFragment implements View.OnClickList
         } else {
             Toast.makeText(getContext(), "Cannot start auto keyboard", Toast.LENGTH_SHORT).show();
         }
-
+        /*SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_WATT_NAME, Context.MODE_PRIVATE);
+        int wattage = sharedPreferences.getInt(WATTAGE, 0);
+        mWattage_input.setText(wattage);*/
         return rootView;
     }
 

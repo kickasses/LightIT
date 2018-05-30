@@ -47,6 +47,7 @@ import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.ColumnChartView;
 import lecho.lib.hellocharts.view.LineChartView;
 
+import static com.lightit.MainActivity.mDayDao;
 import static com.lightit.dialog.SetWattageDialog.SHARED_WATT_NAME;
 import static com.lightit.dialog.SetWattageDialog.WATTAGE;
 
@@ -122,7 +123,7 @@ public class GraphFragment extends Fragment {
                     int randomTimeInt = random.nextInt(86400);
                     int totalEnergy = wattage * (randomTimeInt/3600);
                     String date = String.format("%02d-%02d-%d", day, i, 2018);
-                    Day newDay = new Day(randomTimeInt,totalEnergy,date);
+                    Day newDay = new Day(date,randomTimeInt,totalEnergy);
                     MainActivity.mDayDao.insertDays(newDay);
                 }
             }
@@ -132,7 +133,7 @@ public class GraphFragment extends Fragment {
                     int totalEnergy = wattage * (randomTimeInt/3600);
                     //Log.d(TAG, String.format("%02d-%02d-%d", day, i, 2018));
                     String date = String.format("%02d-%02d-%d", day, i, 2018);
-                    Day newDay = new Day(randomTimeInt,totalEnergy,date);
+                    Day newDay = new Day(date,randomTimeInt,totalEnergy);
                     MainActivity.mDayDao.insertDays(newDay);
                 }
             }
@@ -142,7 +143,7 @@ public class GraphFragment extends Fragment {
                     int totalEnergy = wattage * (randomTimeInt/3600);
                     //Log.d(TAG, String.format("%02d-%02d-%d", day, i, 2018));
                     String date = String.format("%02d-%02d-%d", day, i, 2018);
-                    Day newDay = new Day(randomTimeInt,totalEnergy,date);
+                    Day newDay = new Day(date,randomTimeInt,totalEnergy);
                     MainActivity.mDayDao.insertDays(newDay);
                 }
             }
@@ -152,7 +153,7 @@ public class GraphFragment extends Fragment {
                     int totalEnergy = wattage * (randomTimeInt/3600);
                     //Log.d(TAG, String.format("%02d-%02d-%d", day, i, 2018));
                     String date = String.format("%02d-%02d-%d", day, i, 2018);
-                    Day newDay = new Day(randomTimeInt,totalEnergy,date);
+                    Day newDay = new Day(date,randomTimeInt,totalEnergy);
                     MainActivity.mDayDao.insertDays(newDay);
                 }
             }
@@ -162,13 +163,13 @@ public class GraphFragment extends Fragment {
                     int totalEnergy = wattage * (randomTimeInt/3600);
                     //Log.d(TAG, String.format("%02d-%02d-%d", day, i, 2018));
                     String date = String.format("%02d-%02d-%d", day, i, 2018);
-                    Day newDay = new Day(randomTimeInt,totalEnergy,date);
+                    Day newDay = new Day(date,randomTimeInt,totalEnergy);
                     MainActivity.mDayDao.insertDays(newDay);
                 }
             }
         }*/
 
-        List<Day> days = MainActivity.mDayDao.getAll();
+        List<Day> days = mDayDao.getAll();
         for (Day day : days) {
             Log.d(TAG, day.getDate() + " " + day.getTotalEnergy() + " " + day.getTotalTime() +
                     " " + day.getWeekDay() + " week" + String.valueOf(day.getWeekNumber()));
@@ -247,7 +248,7 @@ public class GraphFragment extends Fragment {
         // Set selection mode to keep selected month column highlighted.
         chartBottom.setValueSelectionEnabled(true);
 
-        chartBottom.setZoomType(ZoomType.HORIZONTAL);
+        chartBottom.setZoomType(ZoomType.HORIZONTAL_AND_VERTICAL);
 
         /*chartBottom.setOnClickListener(new View.OnClickListener() {
 
@@ -297,12 +298,13 @@ public class GraphFragment extends Fragment {
         // For build-up animation you have to disable viewport recalculation.
         chartTop.setViewportCalculationEnabled(false);
 
+        float maxEnergyFoWeek =  MainActivity.mDayDao.getMaxTotalEnergyForWeek(selectedValBottomChart);
         // And set initial max viewport and current viewport- remember to set viewports after data.
-        Viewport v = new Viewport(0, 50, 6, 0);
+        Viewport v = new Viewport(0, maxEnergyFoWeek + maxEnergyFoWeek/10, 6, 0);
         chartTop.setMaximumViewport(v);
         chartTop.setCurrentViewport(v);
 
-        chartTop.setZoomType(ZoomType.HORIZONTAL);
+        chartTop.setZoomType(ZoomType.HORIZONTAL_AND_VERTICAL);
     }
 
     private void generateLineData(int color, int range) {
@@ -317,26 +319,26 @@ public class GraphFragment extends Fragment {
             //String s = String.valueOf(value.getX());
             //Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
             if (value.getX() == 0.0) {
-                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Monday"));
-                Log.d(TAG,String.valueOf(MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "måndag")));
+                value.setTarget(value.getX(), mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Monday"));
+                Log.d(TAG,String.valueOf(mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "måndag")));
             }
             if (value.getX() == 1.0) {
-                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Tuesday"));
+                value.setTarget(value.getX(), mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Tuesday"));
             }
             if (value.getX() == 2.0) {
-                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Wednesday"));
+                value.setTarget(value.getX(), mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Wednesday"));
             }
             if (value.getX() == 3.0) {
-                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Thursday"));
+                value.setTarget(value.getX(), mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Thursday"));
             }
             if (value.getX() == 4.0) {
-                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Friday"));
+                value.setTarget(value.getX(), mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Friday"));
             }
             if (value.getX() == 5.0) {
-                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Saturday"));
+                value.setTarget(value.getX(), mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Saturday"));
             }
             if (value.getX() == 6.0) {
-                value.setTarget(value.getX(), MainActivity.mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Sunday"));
+                value.setTarget(value.getX(), mDayDao.getTotalEnergyInWeekDay(selectedValBottomChart, "Sunday"));
             }
         }
 
@@ -351,7 +353,9 @@ public class GraphFragment extends Fragment {
         public void onValueSelected(int columnIndex, int subcolumnIndex, SubcolumnValue value) {
             generateLineData(value.getColor(), 100);
             selectedValBottomChart = columnIndex + 1; //+1 because its an array that starts on 0
+            generateInitialLineData();
             onValueDeselected();
+
         }
 
         @Override
