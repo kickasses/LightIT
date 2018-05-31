@@ -19,7 +19,7 @@ public class Day {
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "Date")
-    private String date;
+    private String date = "";
 
     @ColumnInfo(name = "TotalTime")
     private float totalTime;
@@ -35,7 +35,9 @@ public class Day {
 
     public Day() {
     }
-    public Day(String date){
+
+    @Ignore
+    public Day(@NonNull String date) {
         this.date = date;
         this.weekDay = getDayOfWeek(date);
         this.weekNumber = getWeekNumberOfDate(date);

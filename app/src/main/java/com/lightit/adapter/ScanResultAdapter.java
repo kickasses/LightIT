@@ -1,8 +1,10 @@
 package com.lightit.adapter;
 
+import android.graphics.Color;
 import android.net.wifi.ScanResult;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +21,17 @@ public class ScanResultAdapter extends RecyclerView.Adapter<ScanResultAdapter.Sc
 
     private List<ScanResult> mScanResults;
     private OnItemClickListener mItemClickListener;
+    public static String connected_ssid;
 
     public ScanResultAdapter(List<ScanResult> scanResults) {
         this.mScanResults = scanResults;
     }
+
+  /*  public ScanResultAdapter(List<ScanResult> scanResults, String connected_ssid) {
+        this.mScanResults = scanResults;
+        this.connected_ssid = connected_ssid;
+        Log.d("Connection-adapter",connected_ssid);
+    }*/
 
     @NonNull
     @Override
@@ -52,6 +61,11 @@ public class ScanResultAdapter extends RecyclerView.Adapter<ScanResultAdapter.Sc
             network_type.append("Open");
         }
         holder.mTextViewWifiCapability.setText(network_type);
+
+        if (result.SSID.equals(connected_ssid)) {
+            holder.mTextViewWifiSSID.setTextColor(Color.parseColor("#468485"));
+            holder.mTextViewWifiCapability.setText(R.string.connected);
+        }
     }
 
     @Override
@@ -89,7 +103,7 @@ public class ScanResultAdapter extends RecyclerView.Adapter<ScanResultAdapter.Sc
         this.mItemClickListener = mItemClickListener;
     }
 
-    public ScanResult getScanItem(int position) {
+    public ScanResult getClickedItem(int position) {
         return mScanResults.get(position);
     }
 }

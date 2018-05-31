@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "1067999493797",
+    "firebase_url": "https://lightit-f9860.firebaseio.com",
+    "project_id": "lightit-f9860",
+    "storage_bucket": "lightit-f9860.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1067999493797:android:30f34124adbc9314",
+        "android_client_info": {
+          "package_name": "com.lightit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1067999493797-5as7132m8h9frjija1ige6uhd8lhosbq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lightit",
+            "certificate_hash": "3568a4b59a3f9558a4385e11ff4d39e279706aed"
+          }
+        },
+        {
+          "client_id": "1067999493797-9guavlbhbtni0p1eioa8vi18f4e65re9.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "1067999493797-9guavlbhbtni0p1eioa8vi18f4e65re9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-pmo0VttjKtqI81YQt-Q7slOTYPCSyU4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1067999493797-9guavlbhbtni0p1eioa8vi18f4e65re9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

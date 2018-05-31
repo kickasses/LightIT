@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">LightIT</string>
+    <string name="app_name_">"  "LightIT</string>
     <string name="title_activity_nav_test">NavTest</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -13,8 +14,6 @@
     <string name="other">Others</string>
     <string name="private_policy">Private Policy</string>
     <string name="about_us">About us</string>
-    <string name="notification">Notification</string>
-    <string name="settings">Settings</string>
 
     <string name="image_des">General image content description</string>
     <string name="enter_password">Enter password</string>
@@ -23,24 +22,28 @@
     <string name="cancel">Cancel</string>
     <string name="connect">Connect</string>
     <string name="home">Home</string>
-    <string name="how_to_save_money_on_your_bills">How to save money on your bills</string>
+    <string name="how_to_save_money_on_your_bills">"   "How to save money on your bills</string>
     <string name="wattage">Wattage</string>
-    <string name="_9w">"     "9 Watt</string>
-    <string name="_10w">"   "10 Watt</string>
-    <string name="_21w">"   "21 Watt</string>
-    <string name="_35w">"   "35 Watt</string>
-    <string name="_48w">"   "48 Watt</string>
-    <string name="_72w">"   "72 Watt</string>
-    <string name="_115w">" "115 Watt</string>
     <string name="enter_device_wattage_or">Enter your wattage</string>
     <string name="set">Set</string>
     <string name="notification_settings">Notification Settings</string>
     <string name="choose_from_below">Choose from below:</string>
     <string name="reset_chart">Reset Chart</string>
-    <string name="tutorial">How to connect to the Wi-Fi</string>
-    <string name="choice1">Choice 1: Go to the connection tab in the list view. Scroll through the
-    connections until you find the lightit network and enter the password.</string>
-    <string name="choice2">Choice 2: Go to your phones Wi-Fi connections and connect through the settings.</string>
-    <string name="set_wattage">How to set wattage</string>
-    <string name="set_wattage_tutorial">Go to the home tab, press the button in the upper right corner and to set wattage.</string>
+    <string name="tutorial">How to connect to  Wi-Fi</string>
+    <string name="choice1">Choice 1: Go to Connection tab, and scroll through the
+    connections until you find 'LightIT' network and enter the password.</string>
+    <string name="choice2">Choice 2: Go to your local device Wi-Fi Settings and change settings from there.</string>
+    <string name="set_wattage">How to set Wattage</string>
+    <string name="set_wattage_tutorial">Go to Home tab, press the button in the upper right corner and set wattage.</string>
+    <string name="connected">Connected</string>
+    <string name="information">Information</string>
+    <string name="energy_breakdown">"   "Energy breakdown</string>
+    <string name="feedback">Feedback</string>
+    <string name="feedback_">Feedback (*)</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="customer_name">Customer Name (Optional)</string>
+    <string name="customer_email">Customer Email (*)</string>
+    <string name="submit_feedback">Submit Feedback</string>
 </resources>

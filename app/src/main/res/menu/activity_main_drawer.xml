@@ -19,14 +19,20 @@
             android:id="@+id/nav_graph"
             android:icon="@drawable/ic_graph"
             android:title="@string/graph" />
-
-        <item
-            android:id="@+id/nav_notification"
-            android:icon="@drawable/ic_notification"
-            android:title="How to setup" />
-
     </group>
 
+    <item android:title="@string/other">
+        <menu>
+            <item
+                android:id="@+id/nav_feedback"
+                android:icon="@drawable/ic_feedback_24dp"
+                android:title="@string/feedback" />
+            <item
+                android:id="@+id/nav_information"
+                android:icon="@drawable/ic_info_24dp"
+                android:title="@string/information" />
+        </menu>
+    </item>
 
 
 </menu>

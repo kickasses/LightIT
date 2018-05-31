@@ -14,15 +14,16 @@ import android.view.MenuItem;
 
 import com.lightit.database.DayDao;
 import com.lightit.database.DayRoomDatabase;
+import com.lightit.fragment.FeedbackFragment;
 import com.lightit.fragment.GraphFragment;
 import com.lightit.fragment.HomeFragment;
 import com.lightit.fragment.AnnotationFragment;
-import com.lightit.fragment.WifiFragment;
+import com.lightit.fragment.ConnectionFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GraphFragment.OnFragmentInteractionListener
-        , WifiFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener,
-        AnnotationFragment.OnFragmentInteractionListener {
+        , ConnectionFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener,
+        AnnotationFragment.OnFragmentInteractionListener,FeedbackFragment.OnFragmentInteractionListener {
 
     private FragmentManager mFragmentManager;
     public static DayRoomDatabase mDayRoomDatabase;
@@ -79,16 +80,20 @@ public class MainActivity extends AppCompatActivity
                 mFragmentManager.beginTransaction().replace(R.id.fragment_container, homeFragment).addToBackStack(null).commit();
                 break;
             case R.id.nav_connection:
-                WifiFragment wifiFragment = new WifiFragment();
+                ConnectionFragment wifiFragment = new ConnectionFragment();
                 mFragmentManager.beginTransaction().replace(R.id.fragment_container, wifiFragment).addToBackStack(null).commit();
                 break;
             case R.id.nav_graph:
                 GraphFragment graphFragment = new GraphFragment();
                 mFragmentManager.beginTransaction().replace(R.id.fragment_container, graphFragment).addToBackStack(null).commit();
                 break;
-            case R.id.nav_notification:
+            case R.id.nav_information:
                 AnnotationFragment annotationFragment = new AnnotationFragment();
                 mFragmentManager.beginTransaction().replace(R.id.fragment_container, annotationFragment).addToBackStack(null).commit();
+                break;
+            case R.id.nav_feedback:
+                FeedbackFragment feedbackFragment = new FeedbackFragment();
+                mFragmentManager.beginTransaction().replace(R.id.fragment_container, feedbackFragment).addToBackStack(null).commit();
                 break;
         }
 

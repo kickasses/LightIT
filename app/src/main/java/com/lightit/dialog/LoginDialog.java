@@ -61,19 +61,13 @@ public class LoginDialog extends DialogFragment {
             Toast.makeText(getContext(), "Cannot start auto keyboard", Toast.LENGTH_SHORT).show();
         }
 
-        mTextViewCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getDialog().dismiss();
-            }
-        });
+        mTextViewCancel.setOnClickListener((View v) ->
+                getDialog().dismiss()
+        );
 
-        mTextViewConnect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendBackData();
-                getDialog().dismiss();
-            }
+        mTextViewConnect.setOnClickListener((View v) -> {
+            sendBackData();
+            getDialog().dismiss();
         });
     }
 

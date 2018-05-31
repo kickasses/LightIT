@@ -3,7 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <Switch
+    <android.support.v7.widget.SwitchCompat
         android:id="@+id/switch_wifi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

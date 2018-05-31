@@ -4,8 +4,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +17,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,6 +26,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.lightit.dialog.LoginDialog;
@@ -35,9 +42,12 @@ import java.util.List;
 
 import static com.lightit.dialog.LoginDialog.*;
 
-public class WifiFragment extends Fragment implements LoginDialogListener {
+public class ConnectionFragment extends Fragment implements LoginDialogListener {
 
-    private static final String TAG = WifiFragment.class.getSimpleName();
+    private static final String TAG = ConnectionFragment.class.getSimpleName();
+
+    private ProgressBar progressBar;
+    private SwitchCompat wifiSwitch;
 
     private WifiManager mWifiManager;
     private BroadcastReceiver mReceiver;
@@ -47,7 +57,7 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
     private Context context;
     private OnFragmentInteractionListener mListener;
 
-    public WifiFragment() {
+    public ConnectionFragment() {
         // Required empty public constructor
     }
 
@@ -67,11 +77,13 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_wifi, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_connection, container, false);
         if (mListener != null) {
             mListener.onFragmentInteraction("Connection");
         }
         setHasOptionsMenu(true);
+
+        progressBar = rootView.findViewById(R.id.progressBar);
 
         mScanResultList = new ArrayList<>();
 
@@ -79,15 +91,16 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
         mWifiManager.startScan();
 
         RecyclerView mRecyclerView = rootView.findViewById(R.id.recycler_scan_result);
+
+        ScanResultAdapter.connected_ssid = getCurrentSsid(context);
         mScanResultAdapter = new ScanResultAdapter(mScanResultList);
+
         mRecyclerView.setAdapter(mScanResultAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mScanResultAdapter.SetOnItemClickListener(new ScanResultAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                ScanResult mSelectedScanItem = mScanResultAdapter.getScanItem(position);
-                showLoginDialog(mSelectedScanItem.SSID);
-            }
+        mScanResultAdapter.SetOnItemClickListener((View view, int position) -> {
+            ScanResult mSelectedScanItem = mScanResultAdapter.getClickedItem(position);
+            showLoginDialog(mSelectedScanItem.SSID);
+
         });
 
         return rootView;
@@ -123,6 +136,23 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        Log.d(TAG, "onPrepareOPtions: ssid " + getCurrentSsid(context));
+        final MenuItem menuItem = menu.findItem(R.id.menuItem_connection);
+        RelativeLayout wifi_view = (RelativeLayout) menuItem.getActionView();
+
+        wifiSwitch = wifi_view.findViewById(R.id.switch_wifi);
+        if (getCurrentSsid(context) == null) {
+            wifiSwitch.setChecked(false);
+        } else {
+            wifiSwitch.setChecked(true);
+        }
+        wifiSwitch.setOnClickListener((View v) ->
+                onOptionsItemSelected(menuItem)
+        );
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_connection, menu);
         super.onCreateOptionsMenu(menu, inflater);
@@ -130,7 +160,21 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.menuItem_connection:
+                if (wifiSwitch.isChecked()) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    mWifiManager.setWifiEnabled(true);
+                } else {
+                    mWifiManager.setWifiEnabled(false);
+                    mScanResultList.clear();
+                    mScanResultAdapter.notifyDataSetChanged();
+                }
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /**
@@ -140,8 +184,6 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
      */
     @Override
     public void onFinishLoginDialog(String SSID, String password) {
-        Log.i(TAG, "ssid:     " + SSID);
-        Log.i(TAG, "password: " + password);
         connectToWifi(SSID, password);
     }
 
@@ -159,7 +201,7 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
 
         if (fm != null) {
             LoginDialog connectDialog = LoginDialog.newInstance(SSID);
-            connectDialog.setTargetFragment(WifiFragment.this, 300);
+            connectDialog.setTargetFragment(ConnectionFragment.this, 300);
             connectDialog.show(fm, "dialog_login");
         }
     }
@@ -198,16 +240,16 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
             mWifiManager.disconnect();
             mWifiManager.enableNetwork(netID, true);
             mWifiManager.reconnect();
-
-            mWifiManager.saveConfiguration();
         } else {
             Toast.makeText(context, "Connection is not successful", Toast.LENGTH_LONG).show();
         }
-    }
+        }
 
     class WifiConnectionReceiver extends BroadcastReceiver {
+
         @Override
         public void onReceive(Context c, Intent intent) {
+
             // Get List of ScanResults
             List<ScanResult> scanResults = mWifiManager.getScanResults();
 
@@ -234,7 +276,27 @@ public class WifiFragment extends Fragment implements LoginDialogListener {
             Collections.sort(sortedScanResults, comparator);
             mScanResultList.clear();
             mScanResultList.addAll(sortedScanResults);
+
+            // Update RecyclerView
             mScanResultAdapter.notifyDataSetChanged();
+
+            // Turn off Progress Bar
+            progressBar.setVisibility(View.GONE);
         }
     }
+
+    public String getCurrentSsid(Context context) {
+        String ssid = null;
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (networkInfo.isConnected()) {
+            final WifiInfo connectionInfo = mWifiManager.getConnectionInfo();
+            if (connectionInfo != null && !TextUtils.isEmpty(connectionInfo.getSSID())) {
+                ssid = connectionInfo.getSSID();
+                ssid = ssid.substring(1, ssid.length() - 1);
+            }
+        }
+        return ssid;
+    }
 }
+

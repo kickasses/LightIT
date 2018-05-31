@@ -1,10 +1,6 @@
 package com.lightit.fragment;
 
-import android.Manifest;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.AsyncTask;
@@ -54,7 +50,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private OnFragmentInteractionListener mListener;
     private Context context;
 
-
+    private FragmentManager mFragmentManager;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -85,21 +81,21 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         image_light = rootView.findViewById(R.id.image_light);
         image_light.setOnClickListener(this);
 
-        FragmentManager fragmentManager = getChildFragmentManager();
+        mFragmentManager = getFragmentManager();
+        FragmentManager mChildFragmentManager = getChildFragmentManager();
 
         LineChartFragment lineChartFragment = new LineChartFragment();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, lineChartFragment).commit();
+        mChildFragmentManager.beginTransaction().replace(R.id.fragment_container, lineChartFragment).commit();
 
         ViewPagerFragment viewPagerFragment = new ViewPagerFragment();
-        fragmentManager.beginTransaction().replace(R.id.container_viewPager, viewPagerFragment).commit();
+        mChildFragmentManager.beginTransaction().replace(R.id.container_viewPager, viewPagerFragment).commit();
 
-        boolean temp = sharedPreferences.getBoolean("lightBoolean", false);
+        boolean isOn = sharedPreferences.getBoolean("lightBoolean", false);
 
-        if (temp == true) {
+        if (isOn) {
             lightIsOn = true;
             ((TransitionDrawable) image_light.getDrawable()).startTransition(0);
-        }
-        else {
+        } else {
             lightIsOn = false;
         }
         return rootView;
@@ -112,14 +108,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        FragmentManager fragmentManager = getFragmentManager();
-
-        if (fragmentManager != null) {
-            if (item.getItemId() == R.id.action_setWattage) {
-                SetWattageDialog setWattageDialog = SetWattageDialog.newInstance();
-                setWattageDialog.setTargetFragment(HomeFragment.this, 300);
-                setWattageDialog.show(fragmentManager, "dialog_choose_watt");
-            }
+        if (item.getItemId() == R.id.action_setWattage) {
+            startWattageDialog();
         }
 
         return true;
@@ -151,19 +141,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_WATT_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         int wattage = sharedPreferences.getInt(WATTAGE, 0);
-        if (wattage <= 0){
-            Toast.makeText(context, "Enter a valid wattage", Toast.LENGTH_SHORT).show();
-            /*if (fragmentManager != null) {
-                SetWattageDialog setWattageDialog = SetWattageDialog.newInstance();
-                setWattageDialog.setTargetFragment(HomeFragment.this, 300);
-                setWattageDialog.show(fragmentManager, "dialog_choose_watt");
-            }*/
-        }else {
+        if (wattage <= 0) {
+            startWattageDialog();
+        } else {
             if (v == image_light) {
                 if (enableLightImage) {
                     if (!lightIsOn) {
                         ((TransitionDrawable) image_light.getDrawable()).startTransition(0);
-
 
                         startTime = System.currentTimeMillis();
                         editor.putLong("startTime", startTime);
@@ -192,32 +176,23 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                             MainActivity.mDayDao.updateEnergyOfDate(getCurrentDate(), wattage * (totalTime / 3600));
                             float theTime = MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate());
                             MainActivity.mDayDao.setEnergyOfDate(getCurrentDate(), wattage * (theTime / (float) 3600));
-
                             Log.i(TAG, "Updated time  : " + MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate()));
                             Log.i(TAG, "Updated energy: " + MainActivity.mDayDao.getTotalEnergyOfDate(getCurrentDate()));
-                            Log.i(TAG, "weekday: " + Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
+
                             fragmentManager.beginTransaction().replace(R.id.fragment_container, lineChartFragment).commit();
 
                         } else {
 
-
                             Day day = new Day(getCurrentDate());
-
-                            //day.setDate(getCurrentDate());
-                            //day.setWeekNumber(getCurrentWeekNumber());
                             MainActivity.mDayRoomDatabase.dayDao().addDay(day);
 
                             MainActivity.mDayDao.updateTimeOfDate(getCurrentDate(), totalTime / (float) 1000);
                             MainActivity.mDayDao.updateEnergyOfDate(getCurrentDate(), wattage * (totalTime / 3600));
                             float theTime = MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate());
                             MainActivity.mDayDao.setEnergyOfDate(getCurrentDate(), wattage * (theTime / (float) 3600));
-
                             Log.i(TAG, "Updated time  : " + MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate()));
                             Log.i(TAG, "Updated energy: " + MainActivity.mDayDao.getTotalEnergyOfDate(getCurrentDate()));
-                            Log.i(TAG, "weekday: " + Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
 
-                            int weekdayNumber = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-                            Log.i(TAG, "weekdayNUMBER: " + weekdayNumber);
                             fragmentManager.beginTransaction().replace(R.id.fragment_container, lineChartFragment).commit();
 
                         }
@@ -233,16 +208,21 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    private void startWattageDialog() {
+
+        if (mFragmentManager != null) {
+            SetWattageDialog setWattageDialog = SetWattageDialog.newInstance();
+            setWattageDialog.setTargetFragment(HomeFragment.this, 300);
+            setWattageDialog.show(mFragmentManager, "dialog_choose_watt");
+        }
+    }
+
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(String title);
     }
 
     private String getCurrentDate() {
         return DateFormat.format("dd-MM-yyyy", new java.util.Date()).toString();
-    }
-
-    public static int getCurrentWeekNumber() {
-        return Calendar.getInstance().get(Calendar.WEEK_OF_YEAR);
     }
 
     static class TaskEsp extends AsyncTask<Void, Void, String> {

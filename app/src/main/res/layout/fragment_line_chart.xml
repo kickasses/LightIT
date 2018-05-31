@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:background="@color/colorPrimaryDark"
-        android:text="Energy breakdown"
+        android:fontFamily="@font/baloo"
+        android:text="@string/energy_breakdown"
         android:textAppearance="@style/TextAppearance.AppCompat"
         android:textColor="@android:color/white"
         android:textSize="18sp" />

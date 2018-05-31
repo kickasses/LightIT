@@ -30,6 +30,7 @@
         android:layout_below="@+id/fragment_container"
         android:layout_marginTop="16dp"
         android:background="@color/colorPrimaryDark"
+        android:fontFamily="@font/baloo"
         android:text="@string/how_to_save_money_on_your_bills"
         android:textColor="@android:color/white"
         android:textSize="18sp" />
