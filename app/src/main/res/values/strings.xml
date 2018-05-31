@@ -37,4 +37,10 @@
     <string name="notification_settings">Notification Settings</string>
     <string name="choose_from_below">Choose from below:</string>
     <string name="reset_chart">Reset Chart</string>
+    <string name="tutorial">How to connect to the Wi-Fi</string>
+    <string name="choice1">Choice 1: Go to the connection tab in the list view. Scroll through the
+    connections until you find the lightit network and enter the password.</string>
+    <string name="choice2">Choice 2: Go to your phones Wi-Fi connections and connect through the settings.</string>
+    <string name="set_wattage">How to set wattage</string>
+    <string name="set_wattage_tutorial">Go to the home tab, press the button in the upper right corner and to set wattage.</string>
 </resources>

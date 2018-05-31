@@ -16,13 +16,13 @@ import com.lightit.database.DayDao;
 import com.lightit.database.DayRoomDatabase;
 import com.lightit.fragment.GraphFragment;
 import com.lightit.fragment.HomeFragment;
-import com.lightit.fragment.NotificationFragment;
+import com.lightit.fragment.AnnotationFragment;
 import com.lightit.fragment.WifiFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GraphFragment.OnFragmentInteractionListener
         , WifiFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener,
-        NotificationFragment.OnFragmentInteractionListener {
+        AnnotationFragment.OnFragmentInteractionListener {
 
     private FragmentManager mFragmentManager;
     public static DayRoomDatabase mDayRoomDatabase;
@@ -87,8 +87,8 @@ public class MainActivity extends AppCompatActivity
                 mFragmentManager.beginTransaction().replace(R.id.fragment_container, graphFragment).addToBackStack(null).commit();
                 break;
             case R.id.nav_notification:
-                NotificationFragment notificationFragment = new NotificationFragment();
-                mFragmentManager.beginTransaction().replace(R.id.fragment_container, notificationFragment).addToBackStack(null).commit();
+                AnnotationFragment annotationFragment = new AnnotationFragment();
+                mFragmentManager.beginTransaction().replace(R.id.fragment_container, annotationFragment).addToBackStack(null).commit();
                 break;
         }
 

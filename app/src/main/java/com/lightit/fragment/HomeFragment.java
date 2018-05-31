@@ -153,6 +153,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         int wattage = sharedPreferences.getInt(WATTAGE, 0);
         if (wattage <= 0){
             Toast.makeText(context, "Enter a valid wattage", Toast.LENGTH_SHORT).show();
+            /*if (fragmentManager != null) {
+                SetWattageDialog setWattageDialog = SetWattageDialog.newInstance();
+                setWattageDialog.setTargetFragment(HomeFragment.this, 300);
+                setWattageDialog.show(fragmentManager, "dialog_choose_watt");
+            }*/
         }else {
             if (v == image_light) {
                 if (enableLightImage) {
@@ -161,6 +166,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
 
                         startTime = System.currentTimeMillis();
+                        editor.putLong("startTime", startTime);
+                        editor.apply();
                         Log.i(TAG, "Start time: " + String.valueOf(startTime));
                         editor.putBoolean("lightBoolean", true);
                         editor.apply();
@@ -169,9 +176,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         ((TransitionDrawable) image_light.getDrawable()).resetTransition();
 
                         long stopTime = System.currentTimeMillis();
+                        editor.putLong("stopTime", stopTime);
+                        editor.apply();
                         Log.i(TAG, "Stop time: " + String.valueOf(stopTime));
 
-                        long totalTime = stopTime - startTime;
+                        long totalTime = sharedPreferences.getLong("stopTime", 0) - sharedPreferences.getLong("startTime", 0);
                         editor.putBoolean("lightBoolean", false);
                         editor.apply();
                         if (MainActivity.mDayDao.getDayOfDate(getCurrentDate()) != null) {
@@ -191,7 +200,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                         } else {
 
-                            Toast.makeText(getContext(), "made a new day", Toast.LENGTH_SHORT).show();
+
                             Day day = new Day(getCurrentDate());
 
                             //day.setDate(getCurrentDate());

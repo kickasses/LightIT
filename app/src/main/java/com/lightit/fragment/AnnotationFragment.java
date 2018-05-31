@@ -13,14 +13,14 @@ import com.lightit.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link NotificationFragment.OnFragmentInteractionListener} interface
+ * {@link AnnotationFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class NotificationFragment extends Fragment {
+public class AnnotationFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public NotificationFragment() {
+    public AnnotationFragment() {
         // Required empty public constructor
     }
 
@@ -28,9 +28,9 @@ public class NotificationFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_notification, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_annotation, container, false);
         if (mListener != null) {
-            mListener.onFragmentInteraction("Notification");
+            mListener.onFragmentInteraction("Information");
         }
 
         return rootView;

@@ -64,9 +64,7 @@ public class SetWattageDialog extends DialogFragment implements View.OnClickList
         } else {
             Toast.makeText(getContext(), "Cannot start auto keyboard", Toast.LENGTH_SHORT).show();
         }
-        /*SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_WATT_NAME, Context.MODE_PRIVATE);
-        int wattage = sharedPreferences.getInt(WATTAGE, 0);
-        mWattage_input.setText(wattage);*/
+
         return rootView;
     }
 
