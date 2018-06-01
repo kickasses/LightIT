@@ -31,7 +31,7 @@
     <string name="reset_chart">Reset Chart</string>
     <string name="tutorial">How to connect to  Wi-Fi</string>
     <string name="choice1">Choice 1: Go to Connection tab, and scroll through the
-    connections until you find 'LightIT' network and enter the password.</string>
+    connections until you find LightIT network and enter the password.</string>
     <string name="choice2">Choice 2: Go to your local device Wi-Fi Settings and change settings from there.</string>
     <string name="set_wattage">How to set Wattage</string>
     <string name="set_wattage_tutorial">Go to Home tab, press the button in the upper right corner and set wattage.</string>
