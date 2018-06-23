@@ -36,7 +36,6 @@ import com.lightit.adapter.ScanResultAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -92,7 +91,7 @@ public class ConnectionFragment extends Fragment implements LoginDialogListener 
 
         RecyclerView mRecyclerView = rootView.findViewById(R.id.recycler_scan_result);
 
-        ScanResultAdapter.connected_ssid = getCurrentSsid(context);
+        ScanResultAdapter.connected_ssid = getCurrentSSID(context);
         mScanResultAdapter = new ScanResultAdapter(mScanResultList);
 
         mRecyclerView.setAdapter(mScanResultAdapter);
@@ -137,12 +136,12 @@ public class ConnectionFragment extends Fragment implements LoginDialogListener 
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        Log.d(TAG, "onPrepareOPtions: ssid " + getCurrentSsid(context));
+        Log.d(TAG, "onPrepareOPtions: ssid " + getCurrentSSID(context));
         final MenuItem menuItem = menu.findItem(R.id.menuItem_connection);
         RelativeLayout wifi_view = (RelativeLayout) menuItem.getActionView();
 
         wifiSwitch = wifi_view.findViewById(R.id.switch_wifi);
-        if (getCurrentSsid(context) == null) {
+        if (getCurrentSSID(context) == null) {
             wifiSwitch.setChecked(false);
         } else {
             wifiSwitch.setChecked(true);
@@ -191,11 +190,7 @@ public class ConnectionFragment extends Fragment implements LoginDialogListener 
         void onFragmentInteraction(String title);
     }
 
-    /**
-     * Show dialog on recyclerView item click
-     *
-     * @param SSID - Selected Wi-Fi network SSID
-     */
+
     private void showLoginDialog(String SSID) {
         FragmentManager fm = getFragmentManager();
 
@@ -206,12 +201,6 @@ public class ConnectionFragment extends Fragment implements LoginDialogListener 
         }
     }
 
-    /**
-     * Connect to the specified Wi-Fi network.
-     *
-     * @param networkSSID     - The Wi-Fi network SSID
-     * @param networkPassword - The Wi-Fi password
-     */
     private void connectToWifi(final String networkSSID, final String networkPassword) {
 
         if (!mWifiManager.isWifiEnabled()) {
@@ -243,7 +232,24 @@ public class ConnectionFragment extends Fragment implements LoginDialogListener 
         } else {
             Toast.makeText(context, "Connection is not successful", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public String getCurrentSSID(Context context) {
+        String SSID = null;
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connManager != null) {
+            NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            if (networkInfo.isConnected()) {
+                final WifiInfo connectionInfo = mWifiManager.getConnectionInfo();
+                if (connectionInfo != null && !TextUtils.isEmpty(connectionInfo.getSSID())) {
+                    SSID = connectionInfo.getSSID();
+                    SSID = SSID.substring(1, SSID.length() - 1);
+                }
+            }
         }
+
+        return SSID;
+    }
 
     class WifiConnectionReceiver extends BroadcastReceiver {
 
@@ -264,16 +270,8 @@ public class ConnectionFragment extends Fragment implements LoginDialogListener 
             // Add to new List
             List<ScanResult> sortedScanResults = new ArrayList<>(map.values());
 
-            // Create Comparator to sort by level
-            Comparator<ScanResult> comparator = new Comparator<ScanResult>() {
-                @Override
-                public int compare(ScanResult o1, ScanResult o2) {
-                    return (Integer.compare(o2.level, o1.level));
-                }
-            };
-
-            // Apply Comparator and sort
-            Collections.sort(sortedScanResults, comparator);
+            // Apply Comparator(Lambda expression) and sort
+            Collections.sort(sortedScanResults, (ScanResult o1, ScanResult o2) -> o2.level - o1.level);
             mScanResultList.clear();
             mScanResultList.addAll(sortedScanResults);
 
@@ -283,20 +281,6 @@ public class ConnectionFragment extends Fragment implements LoginDialogListener 
             // Turn off Progress Bar
             progressBar.setVisibility(View.GONE);
         }
-    }
-
-    public String getCurrentSsid(Context context) {
-        String ssid = null;
-        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (networkInfo.isConnected()) {
-            final WifiInfo connectionInfo = mWifiManager.getConnectionInfo();
-            if (connectionInfo != null && !TextUtils.isEmpty(connectionInfo.getSSID())) {
-                ssid = connectionInfo.getSSID();
-                ssid = ssid.substring(1, ssid.length() - 1);
-            }
-        }
-        return ssid;
     }
 }
 

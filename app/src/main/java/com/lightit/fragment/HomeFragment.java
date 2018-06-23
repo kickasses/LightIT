@@ -1,14 +1,21 @@
 package com.lightit.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.TransitionDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,7 +25,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.lightit.MainActivity;
 import com.lightit.R;
@@ -30,10 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Calendar;
-import java.util.Locale;
 
 import static com.lightit.dialog.SetWattageDialog.SHARED_WATT_NAME;
 import static com.lightit.dialog.SetWattageDialog.WATTAGE;
@@ -41,16 +44,16 @@ import static com.lightit.dialog.SetWattageDialog.WATTAGE;
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private final String TAG = HomeFragment.class.getSimpleName();
+    private final String serverIP = "192.168.4.1";
+
+    private FragmentManager mChildFragmentManager;
+    private WifiManager mWifiManager;
 
     private ImageView image_light;
-    private static boolean enableLightImage = true;
-    private boolean lightIsOn = false;
-    long startTime = 0;
+    private static boolean isOn;
 
     private OnFragmentInteractionListener mListener;
     private Context context;
-
-    private FragmentManager mFragmentManager;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -61,11 +64,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         try {
             context = getActivity();
+            if (context != null) {
+                mWifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            }
         } catch (NullPointerException npe) {
             Log.e(TAG, "Error onCreate");
         }
-
-
     }
 
     @Override
@@ -76,13 +80,19 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         if (mListener != null) {
             mListener.onFragmentInteraction("Home");
         }
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_WATT_NAME, Context.MODE_PRIVATE);
 
         image_light = rootView.findViewById(R.id.image_light);
         image_light.setOnClickListener(this);
 
-        mFragmentManager = getFragmentManager();
-        FragmentManager mChildFragmentManager = getChildFragmentManager();
+        TaskEsp checkLightState = new TaskEsp(serverIP);
+        checkLightState.execute();
+        if (isOn) {
+            ((TransitionDrawable) image_light.getDrawable()).startTransition(0);
+        } else {
+            ((TransitionDrawable) image_light.getDrawable()).resetTransition();
+        }
+
+        mChildFragmentManager = getChildFragmentManager();
 
         LineChartFragment lineChartFragment = new LineChartFragment();
         mChildFragmentManager.beginTransaction().replace(R.id.fragment_container, lineChartFragment).commit();
@@ -90,14 +100,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         ViewPagerFragment viewPagerFragment = new ViewPagerFragment();
         mChildFragmentManager.beginTransaction().replace(R.id.container_viewPager, viewPagerFragment).commit();
 
-        boolean isOn = sharedPreferences.getBoolean("lightBoolean", false);
-
-        if (isOn) {
-            lightIsOn = true;
-            ((TransitionDrawable) image_light.getDrawable()).startTransition(0);
-        } else {
-            lightIsOn = false;
-        }
         return rootView;
     }
 
@@ -134,86 +136,68 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        String onOff = "";
-        final String server = "192.168.4.1";
-        LineChartFragment lineChartFragment = new LineChartFragment();
-        FragmentManager fragmentManager = getChildFragmentManager();
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_WATT_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        int wattage = sharedPreferences.getInt(WATTAGE, 0);
-        if (wattage <= 0) {
-            startWattageDialog();
-        } else {
-            if (v == image_light) {
-                if (enableLightImage) {
-                    if (!lightIsOn) {
-                        ((TransitionDrawable) image_light.getDrawable()).startTransition(0);
 
-                        startTime = System.currentTimeMillis();
-                        editor.putLong("startTime", startTime);
-                        editor.apply();
-                        Log.i(TAG, "Start time: " + String.valueOf(startTime));
-                        editor.putBoolean("lightBoolean", true);
-                        editor.apply();
-                        onOff = "/2/on";
-                    } else {
-                        ((TransitionDrawable) image_light.getDrawable()).resetTransition();
-
-                        long stopTime = System.currentTimeMillis();
-                        editor.putLong("stopTime", stopTime);
-                        editor.apply();
-                        Log.i(TAG, "Stop time: " + String.valueOf(stopTime));
-
-                        long totalTime = sharedPreferences.getLong("stopTime", 0) - sharedPreferences.getLong("startTime", 0);
-                        editor.putBoolean("lightBoolean", false);
-                        editor.apply();
-                        if (MainActivity.mDayDao.getDayOfDate(getCurrentDate()) != null) {
-                            // Get shared wattage
-
-
-                            // Update time and energy
-                            MainActivity.mDayDao.updateTimeOfDate(getCurrentDate(), totalTime / (float) 1000);
-                            MainActivity.mDayDao.updateEnergyOfDate(getCurrentDate(), wattage * (totalTime / 3600));
-                            float theTime = MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate());
-                            MainActivity.mDayDao.setEnergyOfDate(getCurrentDate(), wattage * (theTime / (float) 3600));
-                            Log.i(TAG, "Updated time  : " + MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate()));
-                            Log.i(TAG, "Updated energy: " + MainActivity.mDayDao.getTotalEnergyOfDate(getCurrentDate()));
-
-                            fragmentManager.beginTransaction().replace(R.id.fragment_container, lineChartFragment).commit();
-
-                        } else {
-
-                            Day day = new Day(getCurrentDate());
-                            MainActivity.mDayRoomDatabase.dayDao().addDay(day);
-
-                            MainActivity.mDayDao.updateTimeOfDate(getCurrentDate(), totalTime / (float) 1000);
-                            MainActivity.mDayDao.updateEnergyOfDate(getCurrentDate(), wattage * (totalTime / 3600));
-                            float theTime = MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate());
-                            MainActivity.mDayDao.setEnergyOfDate(getCurrentDate(), wattage * (theTime / (float) 3600));
-                            Log.i(TAG, "Updated time  : " + MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate()));
-                            Log.i(TAG, "Updated energy: " + MainActivity.mDayDao.getTotalEnergyOfDate(getCurrentDate()));
-
-                            fragmentManager.beginTransaction().replace(R.id.fragment_container, lineChartFragment).commit();
-
-                        }
-                        onOff = "/2/off";
-
-                    }
-                    lightIsOn = !lightIsOn;
-                }
-                enableLightImage = false;
-                TaskEsp taskEsp = new TaskEsp(server + onOff);
-                taskEsp.execute();
+        if (v == image_light) {
+            if (!getCurrentSSID(context).equals("LightIT")) {
+                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
             }
+
+            String onOff = "";
+
+            SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_WATT_NAME, Context.MODE_PRIVATE);
+            int wattage = sharedPreferences.getInt(WATTAGE, 0);
+            if (wattage <= 0) {
+                startWattageDialog();
+
+            } else {
+
+                if (!isOn) {    // if light is off, turn it on
+                    ((TransitionDrawable) image_light.getDrawable()).startTransition(0);
+
+                    long startTime = System.currentTimeMillis();
+                    Log.i(TAG, "Start time: " + String.valueOf(startTime));
+
+                    onOff = "/2/on";
+
+                } else {    // if light is on, turn it off
+                    ((TransitionDrawable) image_light.getDrawable()).resetTransition();
+
+                    long stopTime = System.currentTimeMillis();
+                    Log.i(TAG, "Stop time: " + String.valueOf(stopTime));
+
+                    if (MainActivity.mDayDao.getDayOfDate(getCurrentDate()) == null) {
+                        Day day = new Day(getCurrentDate());
+                        MainActivity.mDayRoomDatabase.dayDao().addDay(day);
+                    }
+
+                    // Update time and energy
+                    float totalTime = MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate());
+                    MainActivity.mDayDao.updateTimeOfDate(getCurrentDate(), totalTime / (float) 1000);
+                    MainActivity.mDayDao.updateEnergyOfDate(getCurrentDate(), wattage * (totalTime / 3600));
+                    float theTime = MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate());
+                    MainActivity.mDayDao.setEnergyOfDate(getCurrentDate(), wattage * (theTime / (float) 3600));
+                    Log.i(TAG, "Updated time  : " + MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate()));
+                    Log.i(TAG, "Updated energy: " + MainActivity.mDayDao.getTotalEnergyOfDate(getCurrentDate()));
+
+                    // Update graph
+                    LineChartFragment lineChartFragment = new LineChartFragment();
+                    mChildFragmentManager.beginTransaction().replace(R.id.fragment_container, lineChartFragment).commit();
+
+                    onOff = "/2/off";
+                }
+                isOn = !isOn;
+            }
+            TaskEsp taskEsp = new TaskEsp(serverIP + onOff);
+            taskEsp.execute();
         }
     }
 
     private void startWattageDialog() {
-
-        if (mFragmentManager != null) {
+        FragmentManager fragmentManager = getFragmentManager();
+        if (fragmentManager != null) {
             SetWattageDialog setWattageDialog = SetWattageDialog.newInstance();
             setWattageDialog.setTargetFragment(HomeFragment.this, 300);
-            setWattageDialog.show(mFragmentManager, "dialog_choose_watt");
+            setWattageDialog.show(fragmentManager, "dialog_choose_watt");
         }
     }
 
@@ -225,8 +209,24 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         return DateFormat.format("dd-MM-yyyy", new java.util.Date()).toString();
     }
 
-    static class TaskEsp extends AsyncTask<Void, Void, String> {
+    public String getCurrentSSID(Context context) {
+        String ssid = null;
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connManager != null) {
+            NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            if (networkInfo.isConnected()) {
+                final WifiInfo connectionInfo = mWifiManager.getConnectionInfo();
+                if (connectionInfo != null && !TextUtils.isEmpty(connectionInfo.getSSID())) {
+                    ssid = connectionInfo.getSSID();
+                    ssid = ssid.substring(1, ssid.length() - 1);
+                }
+            }
+        }
 
+        return ssid;
+    }
+
+    static class TaskEsp extends AsyncTask<Void, Void, String> {
         private String server;
 
         TaskEsp(String server) {
@@ -236,7 +236,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         @Override
         protected String doInBackground(Void... voids) {
             final String p = "http://" + server;
-            String serverResponse = "";
+            StringBuilder serverResponse = new StringBuilder();
 
             try {
                 HttpURLConnection httpURLConnection = (HttpURLConnection) (new URL(p).openConnection());
@@ -246,21 +246,24 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     InputStream inputStream = httpURLConnection.getInputStream();
                     BufferedReader bufferedReader =
                             new BufferedReader(new InputStreamReader(inputStream));
-                    serverResponse = bufferedReader.readLine();
+                    String thisLine;
+                    while ((thisLine = bufferedReader.readLine()) != null) {
+                        serverResponse.append(thisLine);
+                    }
+                    Log.d("ServerRes: ", serverResponse.toString());
+                    Log.d("state: ", serverResponse.substring(53, 54));
+
+                    String state = serverResponse.substring(53, 54);
+                    isOn = state.equals("1");
 
                     inputStream.close();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                serverResponse = e.getMessage();
+                serverResponse.append(e.getMessage());
             }
 
-            return serverResponse;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            enableLightImage = true;
+            return serverResponse.toString();
         }
     }
 }

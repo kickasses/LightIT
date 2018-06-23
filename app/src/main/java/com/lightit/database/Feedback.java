@@ -1,4 +1,4 @@
-package com.lightit;
+package com.lightit.database;
 
 public class Feedback {
     private String name;
