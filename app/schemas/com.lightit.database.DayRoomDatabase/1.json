@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "9691ecd6ec69882569992900a9e87b89",
+    "identityHash": "83d045d3fd16fa17ad1ae5e67778525c",
     "entities": [
       {
         "tableName": "day",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`Date` TEXT NOT NULL, `TotalTime` REAL NOT NULL, `TotalEnergy` REAL NOT NULL, `WeekDay` TEXT, `WeekNumber` INTEGER NOT NULL, PRIMARY KEY(`Date`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`Date` TEXT NOT NULL, `TotalTime` INTEGER NOT NULL, `TotalEnergy` REAL NOT NULL, `WeekDay` TEXT, `WeekNumber` INTEGER NOT NULL, PRIMARY KEY(`Date`))",
         "fields": [
           {
             "fieldPath": "date",
@@ -17,7 +17,7 @@
           {
             "fieldPath": "totalTime",
             "columnName": "TotalTime",
-            "affinity": "REAL",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -51,7 +51,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"9691ecd6ec69882569992900a9e87b89\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"83d045d3fd16fa17ad1ae5e67778525c\")"
     ]
   }
 }

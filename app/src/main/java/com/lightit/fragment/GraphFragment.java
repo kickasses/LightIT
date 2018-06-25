@@ -114,53 +114,58 @@ public class GraphFragment extends Fragment {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_WATT_NAME, Context.MODE_PRIVATE);
         int wattage = sharedPreferences.getInt(WATTAGE, 0);
 
-        for (int i = 1; i < 6; i++) { // zmonth
+        for (int i = 1; i < 7; i++) { // month
             if (i == 1) {
                 for (int day = 1; day < 32; day++) {
                     int randomTimeInt = random.nextInt(86400);
-                    int totalEnergy = wattage * (randomTimeInt/3600);
-                    String date = String.format("%02d-%02d-%d", day, i, 2018);
-                    Day newDay = new Day(date,randomTimeInt,totalEnergy);
+                    int totalEnergy = wattage * (randomTimeInt / 3600);
+                    String date = String.format(Locale.US, "%02d-%02d-%d", day, i, 2018);
+                    Day newDay = new Day(date, randomTimeInt, totalEnergy);
                     MainActivity.mDayDao.insertDays(newDay);
                 }
             }
             if (i == 2) {
                 for (int day = 1; day < 29; day++) {
                     int randomTimeInt = random.nextInt(86400);
-                    int totalEnergy = wattage * (randomTimeInt/3600);
-                    //Log.d(TAG, String.format("%02d-%02d-%d", day, i, 2018));
-                    String date = String.format("%02d-%02d-%d", day, i, 2018);
-                    Day newDay = new Day(date,randomTimeInt,totalEnergy);
+                    int totalEnergy = wattage * (randomTimeInt / 3600);
+                    String date = String.format(Locale.US, "%02d-%02d-%d", day, i, 2018);
+                    Day newDay = new Day(date, randomTimeInt, totalEnergy);
                     MainActivity.mDayDao.insertDays(newDay);
                 }
             }
             if (i == 3) {
                 for (int day = 1; day < 32; day++) {
                     int randomTimeInt = random.nextInt(86400);
-                    int totalEnergy = wattage * (randomTimeInt/3600);
-                    //Log.d(TAG, String.format("%02d-%02d-%d", day, i, 2018));
-                    String date = String.format("%02d-%02d-%d", day, i, 2018);
-                    Day newDay = new Day(date,randomTimeInt,totalEnergy);
+                    int totalEnergy = wattage * (randomTimeInt / 3600);
+                    String date = String.format(Locale.US, "%02d-%02d-%d", day, i, 2018);
+                    Day newDay = new Day(date, randomTimeInt, totalEnergy);
                     MainActivity.mDayDao.insertDays(newDay);
                 }
             }
             if (i == 4) {
                 for (int day = 1; day < 31; day++) {
                     int randomTimeInt = random.nextInt(86400);
-                    int totalEnergy = wattage * (randomTimeInt/3600);
-                    //Log.d(TAG, String.format("%02d-%02d-%d", day, i, 2018));
-                    String date = String.format("%02d-%02d-%d", day, i, 2018);
-                    Day newDay = new Day(date,randomTimeInt,totalEnergy);
+                    int totalEnergy = wattage * (randomTimeInt / 3600);
+                    String date = String.format(Locale.US, "%02d-%02d-%d", day, i, 2018);
+                    Day newDay = new Day(date, randomTimeInt, totalEnergy);
                     MainActivity.mDayDao.insertDays(newDay);
                 }
             }
             if (i == 5) {
                 for (int day = 1; day < 30; day++) {
                     int randomTimeInt = random.nextInt(86400);
-                    int totalEnergy = wattage * (randomTimeInt/3600);
-                    //Log.d(TAG, String.format("%02d-%02d-%d", day, i, 2018));
-                    String date = String.format("%02d-%02d-%d", day, i, 2018);
-                    Day newDay = new Day(date,randomTimeInt,totalEnergy);
+                    int totalEnergy = wattage * (randomTimeInt / 3600);
+                    String date = String.format(Locale.US, "%02d-%02d-%d", day, i, 2018);
+                    Day newDay = new Day(date, randomTimeInt, totalEnergy);
+                    MainActivity.mDayDao.insertDays(newDay);
+                }
+            }
+            if (i == 6) {
+                for (int day = 1; day < 25; day++) {
+                    int randomTimeInt = random.nextInt(86400);
+                    int totalEnergy = wattage * (randomTimeInt / 3600);
+                    String date = String.format(Locale.US, "%02d-%02d-%d", day, i, 2018);
+                    Day newDay = new Day(date, randomTimeInt, totalEnergy);
                     MainActivity.mDayDao.insertDays(newDay);
                 }
             }

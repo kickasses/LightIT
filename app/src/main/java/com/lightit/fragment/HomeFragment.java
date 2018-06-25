@@ -29,6 +29,7 @@ import android.widget.ImageView;
 import com.lightit.MainActivity;
 import com.lightit.R;
 import com.lightit.database.Day;
+import com.lightit.dialog.OpenWifiSettingDialog;
 import com.lightit.dialog.SetWattageDialog;
 
 import java.io.BufferedReader;
@@ -46,11 +47,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private final String TAG = HomeFragment.class.getSimpleName();
     private final String serverIP = "192.168.4.1";
 
+    private FragmentManager mFragmentManager;
     private FragmentManager mChildFragmentManager;
     private WifiManager mWifiManager;
 
     private ImageView image_light;
     private static boolean isOn;
+    private long startTime = 0;
 
     private OnFragmentInteractionListener mListener;
     private Context context;
@@ -92,6 +95,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             ((TransitionDrawable) image_light.getDrawable()).resetTransition();
         }
 
+        mFragmentManager = getFragmentManager();
         mChildFragmentManager = getChildFragmentManager();
 
         LineChartFragment lineChartFragment = new LineChartFragment();
@@ -137,67 +141,75 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
 
+        // if click on the light bulb
         if (v == image_light) {
-            if (!getCurrentSSID(context).equals("LightIT")) {
-                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-            }
-
-            String onOff = "";
-
-            SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_WATT_NAME, Context.MODE_PRIVATE);
-            int wattage = sharedPreferences.getInt(WATTAGE, 0);
-            if (wattage <= 0) {
-                startWattageDialog();
-
+            // if mobile is not connected to "LightIT", open Wi-Fi Settings
+            if (getCurrentSSID(context) == null || !getCurrentSSID(context).equals("LightIT")) {
+                startOpenWifiSettingDialog();
             } else {
+                //if mobile is connected to "LightIT"
+                String onOff = "";
 
-                if (!isOn) {    // if light is off, turn it on
-                    ((TransitionDrawable) image_light.getDrawable()).startTransition(0);
+                SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_WATT_NAME, Context.MODE_PRIVATE);
+                int wattage = sharedPreferences.getInt(WATTAGE, 0);
+                if (wattage <= 0) {
+                    startWattageDialog();
+                } else {
 
-                    long startTime = System.currentTimeMillis();
-                    Log.i(TAG, "Start time: " + String.valueOf(startTime));
+                    if (!isOn) {    // if light is off, turn it on
+                        ((TransitionDrawable) image_light.getDrawable()).startTransition(0);
 
-                    onOff = "/2/on";
+                        startTime = System.currentTimeMillis();
+                        Log.i(TAG, "Start time: " + String.valueOf(startTime));
 
-                } else {    // if light is on, turn it off
-                    ((TransitionDrawable) image_light.getDrawable()).resetTransition();
+                        onOff = "/2/on";
 
-                    long stopTime = System.currentTimeMillis();
-                    Log.i(TAG, "Stop time: " + String.valueOf(stopTime));
+                    } else {    // if light is on, turn it off
+                        ((TransitionDrawable) image_light.getDrawable()).resetTransition();
 
-                    if (MainActivity.mDayDao.getDayOfDate(getCurrentDate()) == null) {
-                        Day day = new Day(getCurrentDate());
-                        MainActivity.mDayRoomDatabase.dayDao().addDay(day);
+                        long stopTime = System.currentTimeMillis();
+                        Log.i(TAG, "Stop time: " + String.valueOf(stopTime));
+
+                        if (MainActivity.mDayDao.getDayOfDate(getCurrentDate()) == null) {
+                            Day day = new Day(getCurrentDate());
+                            MainActivity.mDayRoomDatabase.dayDao().addDay(day);
+                        }
+
+                        // Update time and energy
+                        int totalTime = (int) (stopTime - startTime) / 1000; // millisecond -> second
+                        MainActivity.mDayDao.updateTimeOfDate(getCurrentDate(), totalTime);
+                        float totalEnergy = wattage * (totalTime / (float) 3600);
+                        MainActivity.mDayDao.updateEnergyOfDate(getCurrentDate(), totalEnergy);
+                        Log.i(TAG, "Updated time  : " + MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate()));
+                        Log.i(TAG, "Updated energy: " + MainActivity.mDayDao.getTotalEnergyOfDate(getCurrentDate()));
+
+                        // Update graph
+                        LineChartFragment lineChartFragment = new LineChartFragment();
+                        mChildFragmentManager.beginTransaction().replace(R.id.fragment_container, lineChartFragment).commit();
+
+                        onOff = "/2/off";
                     }
-
-                    // Update time and energy
-                    float totalTime = MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate());
-                    MainActivity.mDayDao.updateTimeOfDate(getCurrentDate(), totalTime / (float) 1000);
-                    MainActivity.mDayDao.updateEnergyOfDate(getCurrentDate(), wattage * (totalTime / 3600));
-                    float theTime = MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate());
-                    MainActivity.mDayDao.setEnergyOfDate(getCurrentDate(), wattage * (theTime / (float) 3600));
-                    Log.i(TAG, "Updated time  : " + MainActivity.mDayDao.getTotalTimeOfDate(getCurrentDate()));
-                    Log.i(TAG, "Updated energy: " + MainActivity.mDayDao.getTotalEnergyOfDate(getCurrentDate()));
-
-                    // Update graph
-                    LineChartFragment lineChartFragment = new LineChartFragment();
-                    mChildFragmentManager.beginTransaction().replace(R.id.fragment_container, lineChartFragment).commit();
-
-                    onOff = "/2/off";
+                    isOn = !isOn;
                 }
-                isOn = !isOn;
+                TaskEsp taskEsp = new TaskEsp(serverIP + onOff);
+                taskEsp.execute();
             }
-            TaskEsp taskEsp = new TaskEsp(serverIP + onOff);
-            taskEsp.execute();
         }
     }
 
     private void startWattageDialog() {
-        FragmentManager fragmentManager = getFragmentManager();
-        if (fragmentManager != null) {
+        if (mFragmentManager != null) {
             SetWattageDialog setWattageDialog = SetWattageDialog.newInstance();
             setWattageDialog.setTargetFragment(HomeFragment.this, 300);
-            setWattageDialog.show(fragmentManager, "dialog_choose_watt");
+            setWattageDialog.show(mFragmentManager, "dialog_choose_watt");
+        }
+    }
+
+    private void startOpenWifiSettingDialog() {
+        if (mFragmentManager != null) {
+            OpenWifiSettingDialog openWifiSettingDialog = OpenWifiSettingDialog.newInstance();
+            openWifiSettingDialog.setTargetFragment(HomeFragment.this, 300);
+            openWifiSettingDialog.show(mFragmentManager, "dialog_choose_watt");
         }
     }
 

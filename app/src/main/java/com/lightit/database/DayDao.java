@@ -20,13 +20,13 @@ public interface DayDao {
     List<Day> getAll();
 
     @Query("SELECT TotalTime FROM day WHERE Date=:date")
-    float getTotalTimeOfDate(String date);
+    int getTotalTimeOfDate(String date);
 
     @Query("SELECT TotalEnergy FROM day WHERE Date=:date")
     float getTotalEnergyOfDate(String date);
 
     @Query("UPDATE day SET TotalTime = TotalTime + :onTime WHERE Date = :date")
-    void updateTimeOfDate(String date, float onTime);
+    void updateTimeOfDate(String date, int onTime);
 
     @Query("UPDATE day SET TotalEnergy = TotalEnergy + :onEnergy WHERE Date = :date")
     void updateEnergyOfDate(String date, float onEnergy);
@@ -51,7 +51,6 @@ public interface DayDao {
 
     @Query("select TotalEnergy FROM day where WeekNumber = :weekNumber AND WeekDay = :weekDay")
     float getTotalEnergyInWeekDay(int weekNumber, String weekDay);
-
 
     @Query("Select max(TotalEnergy) From day Where WeekNumber = :weekNumber")
     float getMaxTotalEnergyForWeek(int weekNumber);

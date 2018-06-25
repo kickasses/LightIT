@@ -22,7 +22,7 @@ public class Day {
     private String date = "";
 
     @ColumnInfo(name = "TotalTime")
-    private float totalTime;
+    private int totalTime;
 
     @ColumnInfo(name = "TotalEnergy")
     private float totalEnergy;
@@ -44,7 +44,7 @@ public class Day {
     }
 
     @Ignore
-    public Day(@NonNull String date, float totalTime, float totalEnergy) {
+    public Day(@NonNull String date, int totalTime, float totalEnergy) {
         this.date = date;
         this.weekDay = getDayOfWeek(date);
         this.weekNumber = getWeekNumberOfDate(date);
@@ -68,11 +68,11 @@ public class Day {
         this.weekDay = weekDay;
     }
 
-    public float getTotalTime() {
+    public int getTotalTime() {
         return totalTime;
     }
 
-    public void setTotalTime(float totalTime) {
+    public void setTotalTime(int totalTime) {
         this.totalTime = totalTime;
     }
 
